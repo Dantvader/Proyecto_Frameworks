@@ -1,4 +1,4 @@
-Comandos para poder conectarse remotamente y sbir commits al repositorio
+Comandos para poder conectarse remotamente y subir commits al repositorio
 
 git init
 git remote set-url origin https://github.com/Dantvader/Proyecto_Frameworks.git
