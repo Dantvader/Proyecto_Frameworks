@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio Sesión</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #e9fdfd;
+    }
+
+    .header {
+      background-color: #44658a;
+      color: white;
+      text-align: center;
+      padding: 40px 0;
+      font-size: 2em;
+      border-bottom-left-radius: 40% 10%;
+      border-bottom-right-radius: 40% 10%;
+    }
+
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      max-width: 300px;
+      margin: 60px auto;
+      gap: 15px;
+      font-size: 1em;
+    }
+
+    label {
+      margin-bottom: 3px;
+      font-weight: 500;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 6px;
+      background-color: #b9ecf5;
+      border: none;
+      border-radius: 3px;
+    }
+
+    button {
+      background-color: #d9d9d9;
+      border: none;
+      width: 70px;
+      height: 40px;
+      align-self: flex-end;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #c8c8c8;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    Inicio Sesión
+  </div>
+
+  <div class="form-container">
+    <label for="usuario">Usuario</label>
+    <select id="usuario">
+      <option value="">▼</option>
+      <option>Administrador</option>
+      <option>Empleado</option>
+      <option>Cliente</option>
+    </select>
+
+    <label for="idusuario">ID- Usuario</label>
+    <input type="text" id="idusuario" placeholder="Ingrese su ID">
+
+    <label for="password">Contraseña</label>
+    <input type="password" id="password" placeholder="Ingrese su contraseña">
+
+    <button type="submit"></button>
+  </div>
+</body>
+</html>
