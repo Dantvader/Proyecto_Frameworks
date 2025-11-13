@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Suplente</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #e9fdfd;
+      font-family: "Segoe UI", sans-serif;
+      color: white;
+    }
+
+    /* --- ENCABEZADO SUPERIOR --- */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #44658a;
+      padding: 15px 30px;
+      border-bottom-left-radius: 50px;
+      border-bottom-right-radius: 50px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-icon {
+      width: 50px;
+      height: 50px;
+      background-color: #b9ecf5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      color: #44658a;
+    }
+
+    .user-text {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.95em;
+    }
+
+    .home-icon {
+      width: 50px;
+      height: 50px;
+      background-color: #44658a;
+      border-radius: 50%;
+      border: 2px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .home-icon svg {
+      width: 25px;
+      height: 25px;
+      stroke: white;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* --- BARRA INFERIOR --- */
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #44658a;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      font-size: 0.9em;
+    }
+
+    .footer a {
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* --- CONTENIDO CENTRAL --- */
+    .content {
+      height: calc(100vh - 120px);
+      padding: 40px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ENCABEZADO -->
+  <div class="header">
+    <div class="user-info">
+      <div class="user-icon">👤</div>
+      <div class="user-text">
+        <span>Nombre Usuario</span>
+        <span>ID-usuario</span>
+      </div>
+    </div>
+
+    <div class="home-icon" title="Inicio">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6h-6v6h-5a1 1 0 0 1-1-1z"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- CONTENIDO CENTRAL -->
+  <div class="content">
+    <!-- Aquí puedes agregar el contenido del panel -->
+  </div>
+
+  <!-- PIE DE PÁGINA -->
+  <div class="footer">
+    <a href="#">Validacion de Aplicantes</a>
+    <a href="#">Seguimiento de Aplicantes</a>
+    <a href="#">Publicaion de Resultados</a>
+    <a href="#">Registro Preguntas</a>
+    <a href="#">Acerca</a>
+  </div>
+</body>
+</html>
