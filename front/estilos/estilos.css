@@ -1,0 +1,140 @@
+body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #e9fdfd;
+    }
+
+button:hover {
+      background-color: #c8c8c8;
+    }
+
+
+/* estilos Index*/
+
+    .header {
+      background-color: #44658a;
+      color: white;
+      text-align: center;
+      padding: 40px 0;
+      font-size: 2em;
+      border-bottom-left-radius: 40% 10%;
+      border-bottom-right-radius: 40% 10%;
+    }
+     .form-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      max-width: 300px;
+      margin: 60px auto;
+      gap: 15px;
+      font-size: 1em;
+    }
+    label {
+      margin-bottom: 3px;
+      font-weight: 500;
+    }
+        select,
+    input {
+      width: 100%;
+      padding: 6px;
+      background-color: #b9ecf5;
+      border: none;
+      border-radius: 3px;
+    }
+
+    button {
+      background-color: #d9d9d9;
+      border: none;
+      width: 70px;
+      height: 40px;
+      align-self: flex-end;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+/* estilos reg */
+
+    /* Encabezado */
+    .header-re {
+      background-color: #44658a;
+      color: white;
+      text-align: center;
+      padding: 40px 0 30px;
+      font-size: 2em;
+      font-weight: 500;
+      position: relative;
+      border-bottom-left-radius: 40% 10%;
+      border-bottom-right-radius: 40% 10%;
+    }
+
+        /* Ícono de casa */
+    .home-icon {
+      position: absolute;
+      right: 25px;
+      top: 25px;
+      width: 45px;
+      height: 45px;
+      background-color: #44658a;
+      border-radius: 50%;
+      border: 2px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .home-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: white;
+      fill: none;
+      stroke-width: 2;
+    }
+
+        /* Formulario */
+    .form-container-re {
+      max-width: 600px;
+      margin: 40px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      color: #000;
+      font-size: 1em;
+    }
+
+    .label-re {
+      font-weight: 500;
+    }
+
+    /* Botones */
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .button-re {
+      background-color: #d9d9d9;
+      border: none;
+      border-radius: 5px;
+      width: 130px;
+      height: 40px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 500;
+    }
+      input[type="text"],
+    input[type="email"],
+    input[type="number"] {
+      width: 100%;
+      background-color: #b9ecf5;
+      border: none;
+      padding: 6px;
+      border-radius: 3px;
+    }
+
+    p {
+      font-size: 0.9em;
+      margin-top: 10px;
+      color: #333;
+    }
