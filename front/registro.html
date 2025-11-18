@@ -1,14 +1,109 @@
 <!DOCTYPE html>
-<link rel="stylesheet" href="estilos/estilos.css">
-
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #e9fdfd;
+    }
+
+    /* Encabezado */
+    .header {
+      background-color: #44658a;
+      color: white;
+      text-align: center;
+      padding: 40px 0 30px;
+      font-size: 2em;
+      font-weight: 500;
+      position: relative;
+      border-bottom-left-radius: 40% 10%;
+      border-bottom-right-radius: 40% 10%;
+    }
+
+    /* Ícono de casa */
+    .home-icon {
+      position: absolute;
+      right: 25px;
+      top: 25px;
+      width: 45px;
+      height: 45px;
+      background-color: #44658a;
+      border-radius: 50%;
+      border: 2px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .home-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: white;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* Formulario */
+    .form-container {
+      max-width: 600px;
+      margin: 40px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      color: #000;
+      font-size: 1em;
+    }
+
+    label {
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="number"] {
+      width: 100%;
+      background-color: #b9ecf5;
+      border: none;
+      padding: 6px;
+      border-radius: 3px;
+    }
+
+    p {
+      font-size: 0.9em;
+      margin-top: 10px;
+      color: #333;
+    }
+
+    /* Botones */
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    button {
+      background-color: #d9d9d9;
+      border: none;
+      border-radius: 5px;
+      width: 130px;
+      height: 40px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 500;
+    }
+
+    button:hover {
+      background-color: #c8c8c8;
+    }
+  </style>
 </head>
 <body>
-  <div class="header-re">
+  <div class="header">
     Registro
     <div class="home-icon" title="Inicio">
       <svg viewBox="0 0 24 24">
@@ -17,17 +112,17 @@
     </div>
   </div>
 
-  <div class="form-container-re">
-    <label class="label-re" for="nombre">Nombre completo:</label>
+  <div class="form-container">
+    <label for="nombre">Nombre completo:</label>
     <input type="text" id="nombre" placeholder="Ingrese su nombre completo">
 
-    <label class="label-re" for="correo">Correo electrónico:</label>
+    <label for="correo">Correo electrónico:</label>
     <input type="email" id="correo" placeholder="Ingrese su correo">
 
-    <label class="label-re" for="expediente">Expediente:</label>
+    <label for="expediente">Expediente:</label>
     <input type="text" id="expediente" placeholder="Ingrese su número de expediente">
 
-    <label class="label-re" for="telefono">Número telefónico:</label>
+    <label for="telefono">Número telefónico:</label>
     <input type="text" id="telefono" placeholder="Ingrese su teléfono">
 
     <p>
@@ -45,10 +140,11 @@
 
     <label class="label-re" for="Constancia">Constancia de inscripción</label>
     <input type="file" name="Const">
-      <div class="buttons">
-        <button class="button-re" type="submit">Registrar</button>
-      </div>
+
+    <div class="buttons">
+      <button type="button">Subir ⬆</button>
+      <button type="submit">Registrar</button>
+    </div>
   </div>
-  
 </body>
 </html>
