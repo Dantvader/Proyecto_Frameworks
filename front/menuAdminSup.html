@@ -41,12 +41,6 @@
       color: #44658a;
     }
 
-    .user-text {
-      display: flex;
-      flex-direction: column;
-      font-size: 0.95em;
-    }
-
     .home-icon {
       width: 50px;
       height: 50px;
@@ -59,12 +53,19 @@
       cursor: pointer;
     }
 
-    .home-icon svg {
-      width: 25px;
-      height: 25px;
-      stroke: white;
-      fill: none;
-      stroke-width: 2;
+    /* --- CONTENIDO CENTRAL --- */
+    .content {
+      height: calc(100vh - 120px);
+      padding: 40px;
+      color: black;
+    }
+
+    .section {
+      display: none;   /* Las secciones están ocultas por defecto */
+    }
+
+    .active {
+      display: block;  /* Solo una sección se muestra */
     }
 
     /* --- BARRA INFERIOR --- */
@@ -80,24 +81,22 @@
       font-size: 0.9em;
     }
 
-    .footer a {
+    .footer button {
+      background: none;
+      border: none;
       color: white;
-      text-decoration: none;
-      text-align: center;
+      font-size: 1em;
+      cursor: pointer;
     }
 
-    .footer a:hover {
+    .footer button:hover {
       text-decoration: underline;
-    }
-
-    /* --- CONTENIDO CENTRAL --- */
-    .content {
-      height: calc(100vh - 120px);
-      padding: 40px;
     }
   </style>
 </head>
+
 <body>
+
   <!-- ENCABEZADO -->
   <div class="header">
     <div class="user-info">
@@ -107,26 +106,63 @@
         <span>ID-usuario</span>
       </div>
     </div>
-
-    <div class="home-icon" title="Inicio">
-      <svg viewBox="0 0 24 24">
-        <path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6h-6v6h-5a1 1 0 0 1-1-1z"/>
-      </svg>
-    </div>
+    <div class="home-icon" onclick="showSection('inicio')" title="Inicio">🏠</div>
   </div>
 
-  <!-- CONTENIDO CENTRAL -->
+  <!-- CONTENIDO -->
   <div class="content">
-    <!-- Aquí puedes agregar el contenido del panel -->
+
+    <!-- SECCIÓN INICIO -->
+    <div id="inicio" class="section active">
+      <h2>Bienvenido</h2>
+      <p>Selecciona una opción del menú inferior.</p>
+    </div>
+
+    <!-- SECCIÓN VALIDACION DE APLICANTES -->
+    <div id="validacion" class="section">
+      <h2>Validacion de Aplicantes</h2>
+    </div>
+
+    <!-- SECCIÓN SEGUIMIENTO DE APLICANTES -->
+    <div id="seguimiento" class="section">
+      <h2>Seguimiento de Aplicantes</h2>
+      <p>Aquí va el formulario de Aplicantes.</p>
+    </div>
+
+    <!-- SECCIÓN PUBLICACION DE RESULTADOS -->
+    <div id="publicacion" class="section">
+      <h2>Publicacion de resultados</h2>
+    </div>
+
+    <!-- SECCIÓN REGISTRO DE PREGUNTAS -->
+    <div id="registro" class="section">
+      <h2>Registro de preguntas</h2>
+    </div>
+
+    <!-- SECCIÓN ACERCA -->
+    <div id="acerca" class="section">
+      <h2>Acerca</h2>
+      <p>Información sobre la aplicación.</p>
+    </div>
+
   </div>
 
-  <!-- PIE DE PÁGINA -->
+  <!-- MENÚ INFERIOR -->
   <div class="footer">
-    <a href="#">Validacion de Aplicantes</a>
-    <a href="#">Seguimiento de Aplicantes</a>
-    <a href="#">Publicaion de Resultados</a>
-    <a href="#">Registro Preguntas</a>
-    <a href="#">Acerca</a>
+    <button onclick="showSection('convocatoria')">Validacion de Aplicantes</button>
+    <button onclick="showSection('registro')">Seguimiento de Aplicantes</button>
+    <button onclick="showSection('renovacion')">Publicacion de Resultados</button>
+    <button onclick="showSection('resultados')">Registro de Preguntas</button>
+    <button onclick="showSection('acerca')">Acerca</button>
   </div>
+
+  <!-- SCRIPT PARA CAMBIAR LAS SECCIONES -->
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+  </script>
+
 </body>
 </html>
