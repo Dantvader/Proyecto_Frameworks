@@ -4,23 +4,21 @@ body {
       background-color: #e9fdfd;
     }
 
+.body-m {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background-color: #e9fdfd;
+      color: white;
+    }
+
 button:hover {
       background-color: #c8c8c8;
     }
 
 
-/* estilos Index*/
+/* ---------- Estilos Formularios --------- */
 
-    .header {
-      background-color: #44658a;
-      color: white;
-      text-align: center;
-      padding: 40px 0;
-      font-size: 2em;
-      border-bottom-left-radius: 40% 10%;
-      border-bottom-right-radius: 40% 10%;
-    }
-     .form-container {
+    .form-container { /* form index */
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -29,6 +27,59 @@ button:hover {
       gap: 15px;
       font-size: 1em;
     }
+
+        
+    .form-container-re { /* form registro */
+      max-width: 600px;
+      margin: 40px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      color: #000;
+      font-size: 1em;
+    }
+
+
+
+/* --------- Estilos headers ----------- */
+
+
+    .header { /* header login */
+      background-color: #44658a;
+      color: white;
+      text-align: center;
+      padding: 40px 0;
+      font-size: 2em;
+      border-bottom-left-radius: 40% 10%;
+      border-bottom-right-radius: 40% 10%;
+    }
+    
+    .header-re { /* header registro */
+      background-color: #44658a;
+      color: white;
+      text-align: center;
+      padding: 40px 0 30px;
+      font-size: 2em;
+      font-weight: 500;
+      position: relative;
+      border-bottom-left-radius: 40% 10%;
+      border-bottom-right-radius: 40% 10%;
+    }
+
+    .header-m { /* header menus */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #44658a;
+      padding: 15px 30px;
+      border-bottom-left-radius: 50px;
+      border-bottom-right-radius: 50px;
+    }
+    
+
+/* --------- Estilos Index ----------- */
+
+     
     label {
       margin-bottom: 3px;
       font-weight: 500;
@@ -52,20 +103,7 @@ button:hover {
       cursor: pointer;
     }
 
-/* estilos reg */
-
-    /* Encabezado */
-    .header-re {
-      background-color: #44658a;
-      color: white;
-      text-align: center;
-      padding: 40px 0 30px;
-      font-size: 2em;
-      font-weight: 500;
-      position: relative;
-      border-bottom-left-radius: 40% 10%;
-      border-bottom-right-radius: 40% 10%;
-    }
+/* ------------ Estilos reg -------------- */
 
         /* Ícono de casa */
     .home-icon {
@@ -91,16 +129,7 @@ button:hover {
       stroke-width: 2;
     }
 
-        /* Formulario */
-    .form-container-re {
-      max-width: 600px;
-      margin: 40px auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      color: #000;
-      font-size: 1em;
-    }
+
 
     .label-re {
       font-weight: 500;
@@ -137,4 +166,81 @@ button:hover {
       font-size: 0.9em;
       margin-top: 10px;
       color: #333;
+    }
+
+/* -------------- Estilos MenuAdmin --------------  */
+
+    
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-icon {
+      width: 50px;
+      height: 50px;
+      background-color: #b9ecf5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      color: #44658a;
+    }
+
+    .user-text {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.95em;
+    }
+
+    .home-icon {
+      width: 50px;
+      height: 50px;
+      background-color: #44658a;
+      border-radius: 50%;
+      border: 2px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .home-icon svg {
+      width: 25px;
+      height: 25px;
+      stroke: white;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* --- BARRA INFERIOR --- */
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #44658a;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      font-size: 0.9em;
+    }
+
+    .footer a {
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* --- CONTENIDO CENTRAL --- */
+    .content {
+      height: calc(100vh - 120px);
+      padding: 40px;
     }
