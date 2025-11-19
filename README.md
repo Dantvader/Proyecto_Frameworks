@@ -27,9 +27,12 @@
 
 ## ------ guardar y subir cambios
 
+## git add .
+
 ## git commit -m (Nombre del Commit)
 
 ## git push -u origin (nombre de la rama)
+
 
 ## url = https://dantvader.github.io/Proyecto_Frameworks
 
