@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro</title>
+  <title>Registro de Estudiante</title>
+
   <style>
     body {
       margin: 0;
@@ -11,121 +12,80 @@
       background-color: #e9fdfd;
     }
 
-    /* Encabezado */
     .header {
       background-color: #44658a;
       color: white;
       text-align: center;
-      padding: 40px 0 30px;
+      padding: 40px 0;
       font-size: 2em;
-      font-weight: 500;
-      position: relative;
       border-bottom-left-radius: 40% 10%;
       border-bottom-right-radius: 40% 10%;
     }
 
-    /* Ícono de casa */
-    .home-icon {
-      position: absolute;
-      right: 25px;
-      top: 25px;
-      width: 45px;
-      height: 45px;
-      background-color: #44658a;
-      border-radius: 50%;
-      border: 2px solid white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .home-icon svg {
-      width: 22px;
-      height: 22px;
-      stroke: white;
-      fill: none;
-      stroke-width: 2;
-    }
-
-    /* Formulario */
     .form-container {
-      max-width: 600px;
-      margin: 40px auto;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      color: #000;
-      font-size: 1em;
+      max-width: 350px;
+      margin: 50px auto;
+      gap: 15px;
     }
 
     label {
       font-weight: 500;
     }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="number"] {
-      width: 100%;
-      background-color: #b9ecf5;
+    input, select {
+      padding: 8px;
       border: none;
-      padding: 6px;
-      border-radius: 3px;
-    }
-
-    p {
-      font-size: 0.9em;
-      margin-top: 10px;
-      color: #333;
-    }
-
-    /* Botones */
-    .buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
+      background-color: #b9ecf5;
+      border-radius: 4px;
+      width: 100%;
     }
 
     button {
       background-color: #d9d9d9;
+      padding: 10px;
+      border-radius: 4px;
       border: none;
-      border-radius: 5px;
-      width: 130px;
-      height: 40px;
       cursor: pointer;
-      font-size: 1em;
-      font-weight: 500;
+      width: 120px;
+      align-self: flex-end;
     }
 
     button:hover {
-      background-color: #c8c8c8;
+      background-color: #c7c7c7;
     }
   </style>
 </head>
+
 <body>
-  <div class="header">
-    Registro
-    <div class="home-icon" title="Inicio">
-      <svg viewBox="0 0 24 24">
-        <path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6h-6v6h-5a1 1 0 0 1-1-1z"/>
-      </svg>
-    </div>
-  </div>
 
-  <div class="form-container">
-    <label for="nombre">Nombre completo:</label>
-    <input type="text" id="nombre" placeholder="Ingrese su nombre completo">
+  <div class="header">Registrar Estudiante</div>
 
-    <label for="correo">Correo electrónico:</label>
-    <input type="email" id="correo" placeholder="Ingrese su correo">
+  <form action="insertarEstudiante.php" method="POST">
+    <div class="form-container">
 
-    <label for="expediente">Expediente:</label>
-    <input type="text" id="expediente" placeholder="Ingrese su número de expediente">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" required>
 
-    <div class="buttons">
-      <button type="button">Subir ⬆</button>
+      <label for="matricula">Matrícula:</label>
+      <input type="number" id="matricula" name="matricula" required>
+
+      <label for="carrera">Carrera:</label>
+      <select id="carrera" name="carrera" required>
+        <option value="">Seleccione</option>
+        <option value="Sistemas">Sistemas</option>
+        <option value="Industrial">Industrial</option>
+        <option value="Administración">Administración</option>
+      </select>
+
+      <label for="correo">Correo institucional:</label>
+      <input type="email" id="correo" name="correo" required>
+
       <button type="submit">Registrar</button>
+
     </div>
-  </div>
+  </form>
+
 </body>
 </html>
