@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Editar Convocatoria</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #e9fdfd;
+}
+
+.header {
+    background-color: #44658a;
+    color: white;
+    text-align: center;
+    padding: 40px 0 30px;
+    font-size: 2em;
+    font-weight: 500;
+    position: relative;
+    border-bottom-left-radius: 40% 10%;
+    border-bottom-right-radius: 40% 10%;
+}
+
+.home-icon {
+    position: absolute;
+    right: 25px;
+    top: 25px;
+    width: 45px;
+    height: 45px;
+    background-color: #44658a;
+    border-radius: 50%;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.home-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: white;
+    fill: none;
+    stroke-width: 2;
+}
+
+.form-container {
+    max-width: 900px;
+    margin: 40px auto;
+    color: #000;
+    padding: 0 20px;
+}
+
+input[type="file"] {
+    padding: 15px;
+    border: 2px solid #44658a;
+    background: #b9ecf5;
+    border-radius: 10px;
+    width: 100%;
+    cursor: pointer;
+}
+
+button {
+    margin-top: 20px;
+    background-color: #44658a;
+    color: white;
+    border: none;
+    width: 200px;
+    height: 40px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+button:hover {
+    background-color: #35506d;
+}
+
+/* MENÚ INFERIOR */
+.menu {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #44658a;
+    color: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+}
+.menu a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+}
+.menu a:hover {
+    text-decoration: underline;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    Editar Convocatoria
+    <div class="home-icon" onclick="window.location.href='paginaConv.html'">
+        <svg viewBox="0 0 24 24">
+            <path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6h-6v6h-5a1 1 0 0 1-1-1z"/>
+        </svg>
+    </div>
+</div>
+
+<div class="form-container">
+    <form action="/subir-convocatoria" method="POST" enctype="multipart/form-data">
+        <input type="file" name="pdf" accept="application/pdf" required />
+        <button type="submit">Subir nuevo PDF</button>
+    </form>
+</div>
+
+<div class="menu">
+    <a href="editarResult.html">Editar Resultados</a>
+    <a href="paginaConv.html">Convocatoria</a>
+    <a href="paginaConv.html">Gestión de Becas</a>
+    <a href="paginaConv.html">Registro de Respuestas</a>
+    <!--Cambiar direcciones segun la opcion-->
+</div>
+
+</body>
+</html>
