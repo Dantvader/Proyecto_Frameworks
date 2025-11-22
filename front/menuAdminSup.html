@@ -1,91 +1,100 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Suplente</title>
+
   <style>
-    body {
-      margin: 0;
-      background-color: #e9fdfd;
-      font-family: "Segoe UI", sans-serif;
-      color: white;
+    :root {
+      --azul: #44658a;
+      --fondo: #e9fdfd;
+      --caja: white;
+      --borde-radio: 18px;
     }
 
-    /* --- ENCABEZADO SUPERIOR --- */
+    body {
+      margin: 0;
+      background: var(--fondo);
+      font-family: "Segoe UI", sans-serif;
+    }
+
     .header {
+      background-color: var(--azul);
+      color: white;
+      padding: 18px 30px;
+      border-bottom-left-radius: 45px;
+      border-bottom-right-radius: 45px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background-color: #44658a;
-      padding: 15px 30px;
-      border-bottom-left-radius: 50px;
-      border-bottom-right-radius: 50px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     .user-info {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .user-icon {
-      width: 50px;
-      height: 50px;
-      background-color: #b9ecf5;
+      width: 55px;
+      height: 55px;
+      background: #b9ecf5;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 30px;
-      color: #44658a;
+      display: grid;
+      place-items: center;
+      font-size: 32px;
+      color: var(--azul);
     }
 
     .home-icon {
       width: 50px;
       height: 50px;
-      background-color: #44658a;
-      border-radius: 50%;
+      background: var(--azul);
       border: 2px solid white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
       cursor: pointer;
     }
 
-    /* --- CONTENIDO CENTRAL --- */
     .content {
-      height: calc(100vh - 120px);
-      padding: 40px;
-      color: black;
+      padding: 25px;
+      margin-bottom: 90px;
     }
 
     .section {
-      display: none;   /* Las secciones están ocultas por defecto */
+      display: none;
+      background: var(--caja);
+      padding: 20px;
+      border-radius: var(--borde-radio);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     .active {
-      display: block;  /* Solo una sección se muestra */
+      display: block;
     }
 
-    /* --- BARRA INFERIOR --- */
     .footer {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      background-color: #44658a;
       display: flex;
       justify-content: space-around;
-      padding: 12px 0;
-      font-size: 0.9em;
+      background: var(--azul);
+      padding: 12px;
+      border-top-left-radius: 25px;
+      border-top-right-radius: 25px;
     }
 
     .footer button {
       background: none;
       border: none;
       color: white;
-      font-size: 1em;
+      font-size: 1rem;
       cursor: pointer;
     }
 
@@ -93,74 +102,73 @@
       text-decoration: underline;
     }
   </style>
+
 </head>
 
 <body>
 
-  <!-- ENCABEZADO -->
   <div class="header">
     <div class="user-info">
       <div class="user-icon">👤</div>
-      <div class="user-text">
-        <span>Nombre Usuario</span>
-        <span>ID-usuario</span>
+      <div>
+        <div><strong>Admin suplente</strong></div>
+        <div>ID-usuario</div>
       </div>
     </div>
-    <div class="home-icon" onclick="showSection('inicio')" title="Inicio">🏠</div>
+    <div class="home-icon" onclick="showSection('inicio')">🏠</div>
   </div>
 
-  <!-- CONTENIDO -->
   <div class="content">
 
-    <!-- SECCIÓN INICIO -->
+    <!--- home -->
     <div id="inicio" class="section active">
       <h2>Bienvenido</h2>
-      <p>Selecciona una opción del menú inferior.</p>
+      <p>Seleccione una opción del menú inferior.</p>
     </div>
 
-    <!-- SECCIÓN VALIDACION DE APLICANTES -->
+    <!--- Validación de Aplicantes -->
     <div id="validacion" class="section">
-      <h2>Validacion de Aplicantes</h2>
+      <h2>Validación de Aplicantes</h2>
+      <p>Seleccione una opción del menú inferior.</p>
     </div>
 
-    <!-- SECCIÓN SEGUIMIENTO DE APLICANTES -->
+    <!--- Seguimiento de Aplicante -->
     <div id="seguimiento" class="section">
       <h2>Seguimiento de Aplicantes</h2>
-      <p>Aquí va el formulario de Aplicantes.</p>
+      <p>Seleccione una opción del menú inferior.</p>
     </div>
 
-    <!-- SECCIÓN PUBLICACION DE RESULTADOS -->
+    <!--- Publicación de Resultados -->
     <div id="publicacion" class="section">
-      <h2>Publicacion de resultados</h2>
+      <h2>Publicación de Resultados</h2>
+      <p>Seleccione una opción del menú inferior.</p>
     </div>
 
-    <!-- SECCIÓN REGISTRO DE PREGUNTAS -->
-    <div id="registro" class="section">
-      <h2>Registro de preguntas</h2>
+    <!--- Registro de Preguntas -->
+    <div id="preguntas" class="section">
+      <h2>Registro de Preguntas</h2>
+      <p>Seleccione una opción del menú inferior.</p>
     </div>
 
-    <!-- SECCIÓN ACERCA -->
+    <!--- Acerca de -->
     <div id="acerca" class="section">
       <h2>Acerca</h2>
-      <p>Información sobre la aplicación.</p>
     </div>
 
   </div>
 
-  <!-- MENÚ INFERIOR -->
   <div class="footer">
-    <button onclick="showSection('convocatoria')">Validacion de Aplicantes</button>
-    <button onclick="showSection('registro')">Seguimiento de Aplicantes</button>
-    <button onclick="showSection('renovacion')">Publicacion de Resultados</button>
-    <button onclick="showSection('resultados')">Registro de Preguntas</button>
+    <button onclick="showSection('validacion')">Validación</button>
+    <button onclick="showSection('seguimiento')">Seguimiento</button>
+    <button onclick="showSection('publicacion')">Publicación</button>
+    <button onclick="showSection('preguntas')">Preguntas</button>
     <button onclick="showSection('acerca')">Acerca</button>
   </div>
 
-  <!-- SCRIPT PARA CAMBIAR LAS SECCIONES -->
   <script>
     function showSection(id) {
-      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
+      document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
     }
   </script>
 

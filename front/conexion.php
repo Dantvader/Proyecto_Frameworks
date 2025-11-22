@@ -11,6 +11,15 @@ $puerto      = 3308; // El puerto que configuraste
 $dsn = "mysql:host=$servidor_ip;port=$puerto;dbname=$nombre_bd;charset=utf8mb4";
 
 try {
+    $pdo = new PDO($dsn, $usuario_bd, $password_bd);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Error de conexión: " . $e->getMessage());
+}
+
+
+/*
+try {
     // Crear la instancia de PDO
     $pdo = new PDO($dsn, $usuario_bd, $password_bd);
     
@@ -29,5 +38,6 @@ try {
     // Capturar cualquier error de conexión
     die("Error de conexión: " . $e->getMessage());
 }
+    */
 
 ?>
