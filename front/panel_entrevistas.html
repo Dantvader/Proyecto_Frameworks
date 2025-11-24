@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Asignar Entrevistas</title>
+
+<!-- FullCalendar CSS/JS (agrega desde CDN o local) -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+
+<style>
+  :root{
+    --azul-oscuro: #3e6a83;   /* header */
+    --azul-medio: #2f6f85;
+    --cian-claro: #e6fbfb;    /* fondo página */
+    --panel-bg: #ffffff;
+    --accent: #bfeff2;        /* tarjetas claras */
+    --text-dark: #0b3b4b;
+  }
+
+  body{
+    margin:0;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: var(--cian-claro);
+    color: var(--text-dark);
+  }
+
+  /* header (simula tu sitio) */
+  .topbar{
+    background: linear-gradient(180deg, var(--azul-oscuro), var(--azul-medio));
+    color: #fff;
+    padding: 18px 28px;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .topbar .titulo{ font-size: 22px; font-weight:600; }
+
+  .container{
+    max-width:1200px;
+    margin: 26px auto;
+    padding: 14px;
+  }
+
+  /* Card lista */
+  .student-card{
+    background: linear-gradient(90deg, var(--azul-medio), #2d7f95);
+    color: #fff;
+    padding: 22px;
+    border-radius: 10px;
+    display:flex;
+    gap:18px;
+    align-items:center;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+    margin-bottom: 18px;
+  }
+  .student-card.light{
+    background: var(--accent);
+    color: var(--text-dark);
+  }
+
+  .avatar{
+    width:86px; height:86px; border-radius:50%;
+    background: rgba(255,255,255,0.12);
+    display:flex; align-items:center; justify-content:center;
+    font-size:36px;
+  }
+
+  .info{
+    flex:1;
+  }
+  .info h3{ margin:0 0 8px 0; font-size:20px; }
+  .info p{ margin:6px 0; opacity:0.95; }
+
+  /* controls area */
+  .controls{
+    min-width:380px;
+    display:flex; flex-direction:column; gap:10px;
+  }
+
+  .controls label{ font-size:14px; margin-bottom:6px; display:block; }
+  select, input[type="text"], input[type="datetime-local"], button{
+    width:100%;
+    padding:10px 12px;
+    border-radius:8px;
+    border: none;
+    font-size:14px;
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,0.02);
+  }
+
+  .controls .btn-assign{
+    background: var(--azul-oscuro);
+    color: #fff;
+    cursor:pointer;
+  }
+
+  /* calendario */
+  #calendar{
+    margin-top: 26px;
+    background: var(--panel-bg);
+    padding:12px;
+    border-radius:12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  }
+
+  /* responsive */
+  @media (max-width:900px){
+    .student-card{ flex-direction:column; align-items:flex-start; }
+    .controls{ width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="titulo">Gestión de Becas — Asignar entrevistas</div>
+</div>
+
+<div class="container">
+  <!-- Card dinámico: se generará por JS con la lista de estudiantes -->
+  <div id="cardsContainer"></div>
+
+  <!-- Calendario donde se muestran las entrevistas -->
+  <div id="calendar"></div>
+</div>
+
+<script>
+/* Rutas a tus endpoints PHP */
+const ENDPOINTS = {
+  getStudents: 'get_students.php',
+  assignInterview: 'assign_interview.php',
+  getEvents: 'get_events.php'
+};
+
+/* Función para construir card HTML */
+function makeStudentCard(student) {
+  // Crea elemento
+  const card = document.createElement('div');
+  card.className = 'student-card';
+
+  // avatar
+  const avat = document.createElement('div');
+  avat.className = 'avatar';
+  avat.innerText = student.nombre ? student.nombre.charAt(0).toUpperCase() : 'U';
+
+  // info
+  const info = document.createElement('div');
+  info.className = 'info';
+  info.innerHTML = `<h3>${student.nombre}</h3>
+                    <p>Expediente: <strong>${student.expediente}</strong></p>`;
+
+  // controls
+  const controls = document.createElement('div');
+  controls.className = 'controls';
+  controls.innerHTML = `
+    <label>Fecha y Hora (Formato: Hora 00:00 - 23:59 - dd-mm-yy)</label>
+    <!-- por simplicidad usamos datetime-local y luego lo convertimos -->
+    <input type="datetime-local" class="fecha-input" />
+    <button class="btn-assign">Asignar entrevista</button>
+    <div class="msg" style="font-size:13px;margin-top:6px;"></div>
+  `;
+
+  // evento botón
+  controls.querySelector('.btn-assign').addEventListener('click', async () => {
+    const msgEl = controls.querySelector('.msg');
+    msgEl.innerText = '';
+
+    const fechaInput = controls.querySelector('.fecha-input').value;
+    if (!fechaInput) { msgEl.innerText = 'Selecciona fecha y hora.'; return; }
+
+    // Convertir fechaInput (YYYY-MM-DDTHH:MM) a formato requerido si quieres: 'HH:MM-dd-mm-yy'
+    // Recomendado: enviar ISO a backend y que lo acepte.
+    const dt = new Date(fechaInput);
+    if (isNaN(dt)) { msgEl.innerText = 'Fecha inválida'; return; }
+
+    // Formato de envío: enviar ISO 'YYYY-MM-DD HH:MM'
+    const yyyy = dt.getFullYear();
+    const mm = String(dt.getMonth()+1).padStart(2,'0');
+    const dd = String(dt.getDate()).padStart(2,'0');
+    const hh = String(dt.getHours()).padStart(2,'0');
+    const min = String(dt.getMinutes()).padStart(2,'0');
+    const fecha_sql = `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+
+    // Payload
+    const payload = {
+      estudiante_id: student.id,
+      expediente: student.expediente,
+      fecha_hora: fecha_sql
+    };
+
+    try {
+      const res = await fetch(ENDPOINTS.assignInterview, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Error del servidor');
+
+      msgEl.style.color = 'green';
+      msgEl.innerText = 'Entrevista asignada correctamente.';
+      // refrescar calendario
+      calendar.refetchEvents();
+    } catch (err) {
+      msgEl.style.color = 'crimson';
+      msgEl.innerText = 'Error: ' + err.message;
+    }
+  });
+
+  card.appendChild(avat);
+  card.appendChild(info);
+  card.appendChild(controls);
+  return card;
+}
+
+/* Cargar estudiantes */
+async function loadStudents(){
+  const container = document.getElementById('cardsContainer');
+  container.innerHTML = '<p>Cargando estudiantes...</p>';
+  try {
+    const res = await fetch(ENDPOINTS.getStudents);
+    const students = await res.json();
+    container.innerHTML = '';
+    students.forEach(s => {
+      const card = makeStudentCard(s);
+      container.appendChild(card);
+    });
+  } catch (e) {
+    container.innerHTML = '<p>Error al cargar estudiantes.</p>';
+  }
+}
+
+/* Inicializar FullCalendar */
+let calendar;
+document.addEventListener('DOMContentLoaded', function() {
+  const calendarEl = document.getElementById('calendar');
+
+  calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
+    events: ENDPOINTS.getEvents, // obtiene JSON desde get_events.php
+    eventDisplay: 'block',
+    height: 650,
+    eventClick: function(info) {
+      // opcional: mostrar detalles o permitir editar solo si rol es admin_suplente
+      alert(info.event.title + '\n' + info.event.start);
+    }
+  });
+
+  calendar.render();
+  loadStudents();
+});
+</script>
+</body>
+</html>
