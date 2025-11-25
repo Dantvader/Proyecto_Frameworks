@@ -19,6 +19,9 @@
       margin: 0;
       font-family: "Segoe UI", sans-serif;
       background-color: var(--fondo);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     .header {
@@ -30,51 +33,80 @@
       border-bottom-left-radius: 50px;
       border-bottom-right-radius: 50px;
       box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      margin-bottom: 30px;
     }
 
     .form-container {
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      max-width: 330px;
-      margin: 70px auto;
+      gap: 25px;
+      max-width: 400px;
+      margin: 0 auto;
       font-size: 1rem;
-      padding: 20px;
+      padding: 30px;
       background: white;
       border-radius: var(--borde-radio);
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 90%;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     label {
       font-weight: 600;
+      color: var(--azul);
+      margin-left: 5px;
     }
 
     select,
     input {
       width: 100%;
-      padding: 10px;
+      padding: 12px 15px;
       background-color: var(--input);
       border: none;
       border-radius: var(--borde-radio);
       font-size: 1rem;
       outline: none;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+
+    select:focus,
+    input:focus {
+      box-shadow: 0 0 0 2px rgba(68, 101, 138, 0.3);
     }
 
     button {
-      align-self: flex-end;
-      width: 100px;
-      padding: 10px;
+      width: 120px;
+      padding: 12px;
       background-color: var(--azul);
       color: white;
       border: none;
       border-radius: var(--borde-radio);
       font-size: 1rem;
       cursor: pointer;
-      transition: 0.2s;
+      transition: 0.3s;
+      align-self: center;
+      margin-top: 10px;
+      font-weight: 600;
     }
 
     button:hover {
       background-color: #365071;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .footer {
+      margin-top: auto;
+      text-align: center;
+      padding: 20px;
+      color: var(--azul);
+      font-size: 0.9rem;
     }
   </style>
 
@@ -83,25 +115,52 @@
 
   <div class="header">Inicio Sesión</div>
 
-  <form action="../back/login.php" method="POST">
+  <form action="../back/login.php" method="POST" class="form-container">
+    <div class="form-group">
+      <label for="usuario">Usuario</label>
+      <select id="usuario" name="usuario" required>
+        <option value="" disabled selected>Seleccione tipo de usuario</option>
+        <option value="administrador">Administrador</option>
+        <option value="administrador_sub">Administrador suplente</option>
+        <option value="estudiantes">Estudiante</option>
+      </select>
+    </div>
 
-    <label for="usuario">Usuario</label>
-    <select id="usuario" name="usuario">
-      <option value="">▼</option>
-      <option value="administrador">Administrador</option>
-      <option value="administrador_sub">Administrador suplente</option>
-      <option value="estudiantes">Estudiante</option>
-    </select>
+    <div class="form-group">
+      <label for="idusuario">ID - Usuario</label>
+      <input type="text" id="idusuario" name="idusuario" placeholder="Ingrese su ID" required>
+    </div>
 
-    <label for="idusuario">ID- Usuario</label>
-    <input type="text" id="idusuario" name="idusuario" placeholder="Ingrese su ID">
-
-    <label for="password">Contraseña</label>
-    <input type="password" id="password" name="password" placeholder="Ingrese su contraseña">
+    <div class="form-group">
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" name="password" placeholder="Ingrese su contraseña" required>
+    </div>
 
     <button type="submit">Entrar</button>
-</form>
+  </form>
 
+  <div class="footer">
+    Becas Universidad Autonoma de Querétaro &copy; 2025
+  </div>
+
+  <script>
+    // Mejorar la experiencia del dropdown
+    document.addEventListener('DOMContentLoaded', function() {
+      const usuarioSelect = document.getElementById('usuario');
+      
+     
+      usuarioSelect.addEventListener('change', function() {
+        if (this.value) {
+          this.style.color = '#000'; 
+        }
+      });
+      
+      // Inicializar el color del select
+      if (!usuarioSelect.value) {
+        usuarioSelect.style.color = '#888';
+      }
+    });
+  </script>
 
 </body>
 </html>
