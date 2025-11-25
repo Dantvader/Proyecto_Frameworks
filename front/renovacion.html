@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Renovación de Beca</title>
+<style>
+  body { margin:0; font-family:"Segoe UI",sans-serif; background:#e9fdfd; }
+  .header {
+    background:#44658a; color:#fff; text-align:center;
+    padding:40px 0 30px; font-size:2em; font-weight:500;
+    position:relative; border-bottom-left-radius:40% 10%;
+    border-bottom-right-radius:40% 10%;
+  }
+  .home-icon {
+    position:absolute; right:25px; top:25px; width:45px; height:45px;
+    background:#44658a; border-radius:50%; border:2px solid white;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .home-icon svg{ width:22px;height:22px; stroke:white; fill:none; stroke-width:2;}
+  .container { max-width:900px; margin:20px auto 100px; padding:20px; }
+  .data-box {
+    background:#fff; border-left:10px solid #44658a; padding:18px;
+    border-radius:8px; box-shadow:0 3px 8px rgba(0,0,0,.12); margin-bottom:18px;
+    display:flex; gap:16px; align-items:center;
+  }
+  .avatar {
+    width:72px; height:72px; border-radius:10px; object-fit:cover; border:2px solid #e6f3f7;
+    background:#fff;
+  }
+  .data-box .info p { margin:6px 0; font-size:1em; color:#222; }
+  #estadoBeca { font-weight:700; }
+  .option-box {
+    background:#fff; border-left:10px solid #00a1a7; padding:16px; border-radius:8px;
+    box-shadow:0 3px 8px rgba(0,0,0,.08);
+  }
+  .radio-group { display:flex; gap:28px; font-size:1.05em; margin-top:6px; }
+  input[type="radio"]{ transform:scale(1.15); margin-right:8px; }
+  .file-upload { margin-top:14px; display:none; }
+  input[type="file"]{
+    padding:12px; border:2px solid #44658a; background:#e8f9fb; border-radius:10px; width:100%;
+    cursor:pointer;
+  }
+  .btn {
+    margin-top:20px; background:#44658a; color:#fff; border:none; width:100%;
+    height:46px; border-radius:8px; cursor:pointer; font-size:1.05em;
+  }
+  .btn:hover{ background:#35506d; }
+  .alert {
+    display:none; padding:12px 18px; border-radius:8px; color:#fff; text-align:center;
+    margin-top:14px; font-weight:600;
+  }
+  .menu {
+    position:fixed; bottom:0; left:0; width:100%; background:#44658a; color:#fff;
+    display:flex; justify-content:space-around; padding:14px 0; font-size:1.05em;
+  }
+  .menu a{ color:#fff; text-decoration:none; }
+  .state-pill {
+    display:inline-block; padding:4px 10px; border-radius:12px; font-weight:700;
+  }
+</style>
+</head>
+<body>
+
+  <div class="header">
+    Renovación de Beca
+    <div class="home-icon" onclick="window.history.back()">
+      <svg viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6h-6v6h-5a1 1 0 0 1-1-1z"/></svg>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- DATOS DEL BECARIO (avatar usa archivo subido en /mnt/data/...) -->
+    <div class="data-box">
+      <img class="avatar" src="/mnt/data/A_2D_digital_design_of_a_user_interface_for_a_scho.png" alt="avatar">
+      <div class="info">
+        <p><strong>Nombre:</strong> Juan Pérez Ramírez</p>
+        <p><strong>Matrícula:</strong> 325742</p>
+        <p><strong>Carrera:</strong> Ingeniería en Software</p>
+        <p><strong>Estado de Beca Actual:</strong>
+          <span id="estadoBeca" class="state-pill" style="color:green; background:#e6f5f5; border:1px solid #cfecec;">Activa</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- OPCIONES -->
+    <div class="option-box">
+      <h3 style="margin:0;color:#24496f;">Solicitud de Renovación</h3>
+      <p style="margin:8px 0 6px;color:#444;">Seleccione una opción y envíe su solicitud. Si elige <em>Sí</em>, su estado cambiará a <strong>Pendiente</strong> hasta que un administrador apruebe.</p>
+
+      <div class="radio-group">
+        <label><input type="radio" name="renovar" value="si"> Sí deseo renovar</label>
+        <label><input type="radio" name="renovar" value="no"> No deseo renovar</label>
+      </div>
+
+      <div class="file-upload" id="uploadSection">
+        <p style="margin:10px 0 6px;"><strong>Suba el documento (PDF) para renovar:</strong></p>
+        <input id="docFile" type="file" accept="application/pdf" />
+      </div>
+
+      <button class="btn" onclick="enviarRenovacion()">Enviar renovación</button>
+
+      <div id="alertBox" class="alert"></div>
+    </div>
+
+  </div>
+
+  <div class="menu">
+    <a href="paginaConv.html">Convocatoria</a>
+    <a href="paginaResult.html">Resultados</a>
+    <a href="renovacion.html" style="text-decoration:underline;font-weight:700;color:#fff;">Renovación</a>
+    <a href="acerca.html">Acerca</a>
+  </div>
+
+<script>
+  // Lee estado guardado al cargar la pantalla
+  function aplicarEstadoVisual(estado) {
+    const el = document.getElementById('estadoBeca');
+    if (!el) return;
+    el.innerText = estado;
+    if (estado === 'Baja') {
+      el.style.color = 'white';
+      el.style.background = '#f8d7da';
+      el.style.border = '1px solid #f5c6cb';
+      el.style.color = '#a71d2a';
+    } else if (estado === 'Pendiente') {
+      el.style.color = '#7a4f00';
+      el.style.background = '#fff3cd';
+      el.style.border = '1px solid #ffeeba';
+    } else { // Activa
+      el.style.color = 'green';
+      el.style.background = '#e6f5f5';
+      el.style.border = '1px solid #cfecec';
+    }
+  }
+
+  window.addEventListener('load', () => {
+    const estadoGuardado = localStorage.getItem('estadoBeca');
+    aplicarEstadoVisual(estadoGuardado ? estadoGuardado : 'Activa');
+
+    // Mostrar/ocultar upload según selección previa (si hay)
+    document.querySelectorAll('input[name="renovar"]').forEach(r => {
+      r.addEventListener('change', () => {
+        const upload = document.getElementById('uploadSection');
+        if (r.value === 'si') upload.style.display = 'block';
+        else upload.style.display = 'none';
+      });
+    });
+  });
+
+  function enviarRenovacion(){
+    const opcion = document.querySelector('input[name="renovar"]:checked');
+    const alertBox = document.getElementById('alertBox');
+    if (!opcion) {
+      alert('Seleccione una opción antes de enviar.');
+      return;
+    }
+
+    if (opcion.value === 'si') {
+      // debe subir documento
+      const fileInput = document.getElementById('docFile');
+      if (!fileInput || !fileInput.files || !fileInput.files.length) {
+        alert('Por favor suba el PDF con sus documentos para renovar.');
+        return;
+      }
+
+      // Simular envío del PDF: en un sistema real harías un fetch/POST.
+      // Guardamos el estado como "Pendiente" (no se activa hasta aprobación admin)
+      localStorage.setItem('estadoBeca', 'Pendiente');
+      aplicarEstadoVisual('Pendiente');
+
+      alertBox.innerText = 'Renovación enviada. Estado: PENDIENTE (esperando aprobación).';
+      alertBox.style.background = '#ffc107'; // amarillo
+      alertBox.style.color = '#5b3c00';
+      alertBox.style.display = 'block';
+    } else {
+      // el alumno elige NO renovar -> se marca baja inmediatamente
+      localStorage.setItem('estadoBeca', 'Baja');
+      aplicarEstadoVisual('Baja');
+
+      alertBox.innerText = 'Solicitud procesada. Estado: BAJA.';
+      alertBox.style.background = '#c82333';
+      alertBox.style.color = '#fff';
+      alertBox.style.display = 'block';
+    }
+
+    // opcional: aquí podrías enviar el archivo al servidor con fetch() y registrar el evento en DB
+    // luego de mostrar mensaje regresamos
+    setTimeout(() => {
+      alertBox.style.display = 'none';
+      // regresar a la pantalla anterior (o recargar la sección)
+      history.back();
+    }, 6000);
+  }
+</script>
+
+</body>
+</html>
