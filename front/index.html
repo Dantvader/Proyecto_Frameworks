@@ -139,7 +139,7 @@
 
   <div class="header">Inicio Sesión</div>
 
-  <form action="../back/login.php" method="POST" class="form-container">
+  <form id="loginForm" class="form-container">
     <div class="form-group">
       <label for="usuario">Usuario</label>
       <select id="usuario" name="usuario" required>
@@ -168,6 +168,65 @@
   </div>
 
   <script>
+    // Lógica de login con Firebase - REEMPLAZA TODO EL SCRIPT ACTUAL
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault(); // Evita el envío normal del formulario
+        
+        const tipo = document.getElementById('usuario').value;
+        const id = document.getElementById('idusuario').value;
+        const password = document.getElementById('password').value;
+        
+        // Validación básica
+        if (!tipo || !id || !password) {
+            alert('Por favor complete todos los campos');
+            return;
+        }
+        
+        try {
+            console.log('🔍 Buscando usuario:', { tipo, id, password });
+            
+            // Buscar usuario en Firestore
+            const { collection, query, where, getDocs } = window.firebaseModules;
+            const q = query(
+                collection(window.firebaseDB, "usuarios"),
+                where("tipo", "==", tipo),
+                where("id", "==", id),
+                where("contrasena", "==", password)
+            );
+            
+            console.log('📡 Consulta creada, ejecutando...');
+            const querySnapshot = await getDocs(q);
+            console.log('📨 Respuesta recibida:', querySnapshot.empty ? 'No encontrado' : 'Encontrado');
+            
+            if (!querySnapshot.empty) {
+                // Login exitoso
+                const userDoc = querySnapshot.docs[0];
+                const userData = userDoc.data();
+                
+                console.log('✅ Usuario encontrado:', userData);
+                
+                // Guardar en localStorage
+                localStorage.setItem('usuario', JSON.stringify(userData));
+                localStorage.setItem('tipo', tipo);
+                
+                // Redirigir
+                if (tipo === "administrador") {
+                    window.location.href = "menuAdmin.html";
+                } else if (tipo === "administrador_sub") {
+                    window.location.href = "menuAdminSup.html";
+                } else {
+                    window.location.href = "menuUser.html";
+                }
+            } else {
+                alert('Credenciales incorrectas. Prueba con: admin1 / admin123');
+            }
+        } catch (error) {
+            console.error('❌ Error en login:', error);
+            alert('Error de conexión. Verifica la consola (F12) para más detalles.');
+        }
+    });
+
+    // codigo drop down
     // Mejorar la experiencia del dropdown
     document.addEventListener('DOMContentLoaded', function() {
       const usuarioSelect = document.getElementById('usuario');
@@ -184,6 +243,8 @@
         usuarioSelect.style.color = '#888';
       }
     });
+
+    
   </script>
 
 </body>
