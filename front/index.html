@@ -139,7 +139,7 @@
 
   <div class="header">Inicio Sesión</div>
 
-  <form id="loginForm" class="form-container">
+  <div id="loginForm" class="form-container">
     <div class="form-group">
         <label for="usuario">Usuario</label>
         <select id="usuario" name="usuario" required>
@@ -160,8 +160,8 @@
         <input type="password" id="password" name="password" placeholder="Ingrese su contraseña" required>
     </div>
 
-    <button type="submit">Entrar</button>
-</form>
+    <button type="button" id="loginButton">Entrar</button>
+  </div>
 
   <div class="footer">
     Becas Universidad Autonoma de Querétaro &copy; 2025
@@ -170,8 +170,7 @@
   <script>
 
     // Lógica de login con Firebase 
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-        e.preventDefault(); // Evita el envío normal del formulario
+    document.getElementById('loginButton').addEventListener('click', async function() {
         
         const tipo = document.getElementById('usuario').value;
         const id = document.getElementById('idusuario').value;
