@@ -5,6 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inicio Sesión</title>
 
+   <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js";
+        
+        // ✅ REEMPLAZA CON TUS CREDENCIALES REALES
+        const firebaseConfig = {
+            apiKey: "AIzaSyD...tu-api-key-real",
+            authDomain: "tu-proyecto.firebaseapp.com",
+            projectId: "tu-proyecto-id-real",
+            storageBucket: "tu-proyecto.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abc123tu-app-id-real"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        window.firebaseApp = app;
+        window.firebaseDB = db;
+        window.firebaseModules = { collection, query, where, getDocs };
+    </script>
+
   <style>
     :root {
       --azul: #44658a;
