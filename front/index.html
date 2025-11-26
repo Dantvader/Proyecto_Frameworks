@@ -168,7 +168,8 @@
   </div>
 
   <script>
-    // Lógica de login con Firebase - REEMPLAZA TODO EL SCRIPT ACTUAL
+
+    // Lógica de login con Firebase 
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault(); // Evita el envío normal del formulario
         
@@ -187,42 +188,48 @@
             
             // Buscar usuario en Firestore
             const { collection, query, where, getDocs } = window.firebaseModules;
+
             const q = query(
                 collection(window.firebaseDB, "usuarios"),
-                where("tipo", "==", tipo),
                 where("id", "==", id),
+                where("tipo", "==", tipo),
                 where("contrasena", "==", password)
             );
             
             console.log('📡 Consulta creada, ejecutando...');
             const querySnapshot = await getDocs(q);
-            console.log('📨 Respuesta recibida:', querySnapshot.empty ? 'No encontrado' : 'Encontrado');
+            console.log('📊 Resultados encontrados:', querySnapshot.size);
             
             if (!querySnapshot.empty) {
                 // Login exitoso
                 const userDoc = querySnapshot.docs[0];
                 const userData = userDoc.data();
                 
-                console.log('✅ Usuario encontrado:', userData);
+                console.log('✅ Login exitoso:', userData);
                 
                 // Guardar en localStorage
-                localStorage.setItem('usuario', JSON.stringify(userData));
-                localStorage.setItem('tipo', tipo);
+                 localStorage.setItem('usuario', JSON.stringify({
+                  ...userData,
+                  docId: userDoc.id // Guardar también el ID del documento
+                }));
                 
                 // Redirigir
-                if (tipo === "administrador") {
-                    window.location.href = "menuAdmin.html";
-                } else if (tipo === "administrador_sub") {
-                    window.location.href = "menuAdminSup.html";
-                } else {
-                    window.location.href = "menuUser.html";
-                }
+                const redirectUrls = {
+                  'administrador': 'menuAdmin.html',
+                  'administrador_sub': 'menuAdminSup.html', 
+                  'estudiantes': 'menuUser.html'
+                };
+
+                window.location.href = redirectUrls[tipo] || 'menuUser.html';
+
             } else {
-                alert('Credenciales incorrectas. Prueba con: admin1 / admin123');
+                console.log('❌ No se encontró usuario con esas credenciales');
+                alert('Credenciales incorrectas. Verifica tu ID, tipo de usuario y contraseña.');
             }
         } catch (error) {
             console.error('❌ Error en login:', error);
-            alert('Error de conexión. Verifica la consola (F12) para más detalles.');
+            console.error('Detalles del error:', error.message);
+            alert('Error de conexión: ' + error.message)
         }
     });
 
