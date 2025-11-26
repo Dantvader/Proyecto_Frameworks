@@ -5,6 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Suplente</title>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
     :root {
@@ -12,6 +16,8 @@
       --fondo: #e9fdfd;
       --caja: white;
       --borde-radio: 18px;
+      --entrevista-color: #e6f2ff;
+      --entrevista-borde: #b3d9ff;
     }
 
     body {
@@ -101,6 +107,207 @@
     .footer button:hover {
       text-decoration: underline;
     }
+
+    /* Estilos para el calendario semanal */
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .calendar-nav {
+      display: flex;
+      gap: 10px;
+    }
+
+    .calendar-nav button {
+      background-color: var(--azul);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    .calendar-nav button:hover {
+      background-color: #365a7a;
+    }
+
+    .week-calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .day-header {
+      text-align: center;
+      font-weight: bold;
+      padding: 10px;
+      background-color: var(--azul);
+      color: white;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .day-column {
+      background-color: #f9f9f9;
+      border-radius: 0 0 8px 8px;
+      min-height: 400px;
+      padding: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .interview-card {
+      background-color: var(--entrevista-color);
+      border: 1px solid var(--entrevista-borde);
+      border-radius: 6px;
+      padding: 8px;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+
+    .interview-card:hover {
+      background-color: #d4e6ff;
+    }
+
+    .interview-time {
+      font-weight: bold;
+      color: var(--azul);
+    }
+
+    .interview-candidate {
+      font-weight: 500;
+      margin: 4px 0;
+    }
+
+    .interview-position {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .empty-day {
+      color: #999;
+      text-align: center;
+      padding: 20px;
+      font-style: italic;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 25px;
+      border-radius: var(--borde-radio);
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background-color: var(--azul);
+      color: white;
+    }
+
+    .btn-secondary {
+      background-color: #ddd;
+      color: #333;
+    }
+
+    .student-list {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .student-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    .student-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .student-item:last-child {
+      border-bottom: none;
+    }
+
+    .selected-student {
+      background-color: var(--entrevista-color);
+      border-left: 3px solid var(--azul);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
   </style>
 
 </head>
@@ -134,8 +341,60 @@
 
     <!--- Seguimiento de Aplicante -->
     <div id="seguimiento" class="section">
-      <h2>Seguimiento de Aplicantes</h2>
-      <p>Seleccione una opción del menú inferior.</p>
+      <h2>Calendario de Entrevistas</h2>
+      
+      <div class="calendar-header">
+        <h3 id="current-week">Semana actual</h3>
+        <div class="calendar-nav">
+          <button id="prev-week">← Semana anterior</button>
+          <button id="today">Hoy</button>
+          <button id="next-week">Semana siguiente →</button>
+        </div>
+      </div>
+      
+      <div class="week-calendar">
+        <div class="day-header">Lunes</div>
+        <div class="day-header">Martes</div>
+        <div class="day-header">Miércoles</div>
+        <div class="day-header">Jueves</div>
+        <div class="day-header">Viernes</div>
+        <div class="day-header">Sábado</div>
+        <div class="day-header">Domingo</div>
+        
+        <div class="day-column" id="monday" data-day="1">
+          <div class="loading">Cargando entrevistas...</div>
+        </div>
+        
+        <div class="day-column" id="tuesday" data-day="2">
+          <div class="loading">Cargando entrevistas...</div>
+        </div>
+        
+        <div class="day-column" id="wednesday" data-day="3">
+          <div class="loading">Cargando entrevistas...</div>
+        </div>
+        
+        <div class="day-column" id="thursday" data-day="4">
+          <div class="loading">Cargando entrevistas...</div>
+        </div>
+        
+        <div class="day-column" id="friday" data-day="5">
+          <div class="loading">Cargando entrevistas...</div>
+        </div>
+        
+        <div class="day-column" id="saturday" data-day="6">
+          <div class="loading">Cargando entrevistas...</div>
+        </div>
+        
+        <div class="day-column" id="sunday" data-day="0">
+          <div class="loading">Cargando entrevistas...</div>
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: 20px;">
+        <button id="add-interview-btn" style="background-color: var(--azul); color: white; border: none; border-radius: 5px; padding: 10px 20px; cursor: pointer;">
+          Agregar Nueva Entrevista
+        </button>
+      </div>
     </div>
 
     <!--- Publicación de Resultados -->
@@ -165,16 +424,329 @@
     <button onclick="showSection('acerca')">Acerca</button>
   </div>
 
+  <!-- Modal para agregar entrevista -->
+  <div id="interview-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Agendar Nueva Entrevista</h3>
+        <button class="close-btn">&times;</button>
+      </div>
+      <form id="interview-form">
+        <div class="form-group">
+          <label for="student-search">Seleccionar Estudiante:</label>
+          <input type="text" id="student-search" placeholder="Buscar estudiante...">
+          <div class="student-list" id="student-list">
+            <div class="loading">Cargando estudiantes...</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="interview-date">Fecha de la Entrevista:</label>
+          <input type="date" id="interview-date" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="interview-time">Hora de la Entrevista:</label>
+          <input type="time" id="interview-time" required>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-interview">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Agendar Entrevista</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "tu-api-key",
+      authDomain: "becauaqbd.firebaseapp.com",
+      projectId: "becauaqbd",
+      storageBucket: "becauaqbd.appspot.com",
+      messagingSenderId: "tu-sender-id",
+      appId: "tu-app-id"
+    };
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Variables globales
+    let selectedStudentId = null;
+    let currentDate = new Date();
+    let estudiantes = [];
+    let entrevistas = [];
+
     function showSection(id) {
       document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
       document.getElementById(id).classList.add("active");
+      
+      // Si se muestra la sección de entrevistas, actualizar el calendario
+      if (id === 'seguimiento') {
+        loadEstudiantes();
+        updateWeekDisplay();
+      }
     }
 
-        // Verificar que el usuario esté logueado
-    if (!localStorage.getItem('usuario')) {
-        window.location.href = 'index.html';
+    // Funciones para conexión con Firebase/Firestore
+    async function loadEstudiantes() {
+      try {
+        const snapshot = await db.collection('est1').get();
+        estudiantes = [];
+        snapshot.forEach(doc => {
+          const estudiante = doc.data();
+          estudiante.id = doc.id;
+          estudiantes.push(estudiante);
+        });
+        
+        // Si el modal está abierto, actualizar la lista
+        if (document.getElementById('interview-modal').style.display === 'flex') {
+          loadStudentList();
+        }
+      } catch (error) {
+        console.error('Error al cargar estudiantes:', error);
+      }
     }
+
+    async function loadEntrevistas(startDate) {
+      try {
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 7);
+        
+        const snapshot = await db.collection('entrevista')
+          .where('Fecha', '>=', startDate)
+          .where('Fecha', '<=', endDate)
+          .get();
+        
+        entrevistas = [];
+        snapshot.forEach(doc => {
+          const entrevista = doc.data();
+          entrevista.id = doc.id;
+          // Convertir timestamp de Firestore a Date
+          if (entrevista.Fecha && entrevista.Fecha.toDate) {
+            entrevista.Fecha = entrevista.Fecha.toDate();
+          }
+          entrevistas.push(entrevista);
+        });
+        
+        populateCalendar();
+      } catch (error) {
+        console.error('Error al cargar entrevistas:', error);
+      }
+    }
+
+    async function saveEntrevista(entrevistaData) {
+      try {
+        // Convertir fecha y hora a objeto Date
+        const fechaCompleta = new Date(`${entrevistaData.Fecha}`);
+        
+        // Agregar datos adicionales
+        entrevistaData.Fecha = fechaCompleta;
+        entrevistaData.Creado = firebase.firestore.FieldValue.serverTimestamp();
+        
+        // Guardar en Firestore
+        const docRef = await db.collection('entrevista').add(entrevistaData);
+        return { success: true, id: docRef.id };
+      } catch (error) {
+        console.error('Error al guardar entrevista:', error);
+        return { success: false, message: error.message };
+      }
+    }
+
+    // Funcionalidad para navegar entre semanas
+    document.addEventListener('DOMContentLoaded', function() {
+      const prevWeekBtn = document.getElementById('prev-week');
+      const nextWeekBtn = document.getElementById('next-week');
+      const todayBtn = document.getElementById('today');
+      const currentWeekElement = document.getElementById('current-week');
+      const addInterviewBtn = document.getElementById('add-interview-btn');
+      const modal = document.getElementById('interview-modal');
+      const closeBtn = document.querySelector('.close-btn');
+      const cancelBtn = document.getElementById('cancel-interview');
+      const studentSearch = document.getElementById('student-search');
+      const studentList = document.getElementById('student-list');
+      const interviewForm = document.getElementById('interview-form');
+      
+      // Cargar estudiantes al iniciar
+      loadEstudiantes();
+      
+      // Abrir modal para agregar entrevista
+      addInterviewBtn.addEventListener('click', function() {
+        selectedStudentId = null;
+        document.getElementById('interview-date').value = '';
+        document.getElementById('interview-time').value = '';
+        studentSearch.value = '';
+        loadStudentList();
+        modal.style.display = 'flex';
+      });
+      
+      // Cerrar modal
+      closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+      });
+      
+      cancelBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+      });
+      
+      // Buscar estudiantes
+      studentSearch.addEventListener('input', function() {
+        loadStudentList(this.value);
+      });
+      
+      // Enviar formulario de entrevista
+      interviewForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!selectedStudentId) {
+          alert('Por favor, seleccione un estudiante');
+          return;
+        }
+        
+        const date = document.getElementById('interview-date').value;
+        const time = document.getElementById('interview-time').value;
+        
+        if (!date || !time) {
+          alert('Por favor, complete la fecha y hora de la entrevista');
+          return;
+        }
+        
+        // Buscar el estudiante seleccionado
+        const estudiante = estudiantes.find(e => e.id === selectedStudentId);
+        if (!estudiante) {
+          alert('Error: Estudiante no encontrado');
+          return;
+        }
+        
+        // Crear objeto de entrevista
+        const nuevaEntrevista = {
+          Nombre_Estudiante: estudiante.Nombre,
+          ID_Estudiante: estudiante.id,
+          Nombre_Administrador: 'Admin suplente', // Usando el nombre del admin suplente
+          Fecha: `${date}T${time}`
+        };
+        
+        // Guardar en la base de datos
+        const result = await saveEntrevista(nuevaEntrevista);
+        
+        if (result.success) {
+          // Actualizar calendario
+          updateWeekDisplay();
+          
+          // Cerrar modal
+          modal.style.display = 'none';
+          
+          alert('Entrevista agendada exitosamente');
+        } else {
+          alert('Error al agendar entrevista: ' + result.message);
+        }
+      });
+      
+      function loadStudentList(searchTerm = '') {
+        studentList.innerHTML = '';
+        
+        if (estudiantes.length === 0) {
+          studentList.innerHTML = '<div class="loading">Cargando estudiantes...</div>';
+          return;
+        }
+        
+        const filteredStudents = estudiantes.filter(estudiante => 
+          estudiante.Nombre.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        
+        if (filteredStudents.length === 0) {
+          studentList.innerHTML = '<div class="student-item">No se encontraron estudiantes</div>';
+          return;
+        }
+        
+        filteredStudents.forEach(estudiante => {
+          const studentItem = document.createElement('div');
+          studentItem.className = 'student-item';
+          studentItem.textContent = estudiante.Nombre;
+          studentItem.addEventListener('click', function() {
+            // Remover selección anterior
+            document.querySelectorAll('.student-item').forEach(item => {
+              item.classList.remove('selected-student');
+            });
+            
+            // Seleccionar nuevo estudiante
+            studentItem.classList.add('selected-student');
+            selectedStudentId = estudiante.id;
+            studentSearch.value = estudiante.Nombre;
+          });
+          
+          studentList.appendChild(studentItem);
+        });
+      }
+      
+      function updateWeekDisplay() {
+        const startOfWeek = new Date(currentDate);
+        startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // Lunes
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6); // Domingo
+        
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        currentWeekElement.textContent = `Semana del ${startOfWeek.toLocaleDateString('es-ES', options)} al ${endOfWeek.toLocaleDateString('es-ES', options)}`;
+        
+        // Cargar entrevistas para esta semana
+        loadEntrevistas(startOfWeek);
+      }
+      
+      function populateCalendar() {
+        // Limpiar calendario
+        document.querySelectorAll('.day-column').forEach(column => {
+          column.innerHTML = '';
+        });
+        
+        // Insertar entrevistas en los días correspondientes
+        entrevistas.forEach(entrevista => {
+          const fechaEntrevista = new Date(entrevista.Fecha);
+          const dayOfWeek = fechaEntrevista.getDay(); // 0=Domingo, 1=Lunes, etc.
+          const dayColumn = document.querySelector(`.day-column[data-day="${dayOfWeek}"]`);
+          
+          if (dayColumn) {
+            const interviewCard = document.createElement('div');
+            interviewCard.className = 'interview-card';
+            interviewCard.innerHTML = `
+              <div class="interview-time">${fechaEntrevista.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'})}</div>
+              <div class="interview-candidate">${entrevista.Nombre_Estudiante}</div>
+              <div class="interview-position">Administrador: ${entrevista.Nombre_Administrador}</div>
+            `;
+            dayColumn.appendChild(interviewCard);
+          }
+        });
+        
+        // Mostrar mensaje para días vacíos
+        document.querySelectorAll('.day-column').forEach(column => {
+          if (column.children.length === 0) {
+            const emptyMessage = document.createElement('div');
+            emptyMessage.className = 'empty-day';
+            emptyMessage.textContent = 'No hay entrevistas programadas';
+            column.appendChild(emptyMessage);
+          }
+        });
+      }
+      
+      prevWeekBtn.addEventListener('click', function() {
+        currentDate.setDate(currentDate.getDate() - 7);
+        updateWeekDisplay();
+      });
+      
+      nextWeekBtn.addEventListener('click', function() {
+        currentDate.setDate(currentDate.getDate() + 7);
+        updateWeekDisplay();
+      });
+      
+      todayBtn.addEventListener('click', function() {
+        currentDate = new Date();
+        updateWeekDisplay();
+      });
+      
+      // Inicializar con la semana actual
+      updateWeekDisplay();
+    });
   </script>
 
 </body>
