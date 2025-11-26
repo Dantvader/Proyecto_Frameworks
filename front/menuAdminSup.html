@@ -170,6 +170,11 @@
       document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
       document.getElementById(id).classList.add("active");
     }
+
+        // Verificar que el usuario esté logueado
+    if (!localStorage.getItem('usuario')) {
+        window.location.href = 'index.html';
+    }
   </script>
 
 </body>
