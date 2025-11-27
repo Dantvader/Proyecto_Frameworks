@@ -1,277 +1,577 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Suplente</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Administrador Suplente</title>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js";
-    
-    const firebaseConfig = {
-      apiKey: "AIzaSyCw8ae27O1Bg8MNBZDKrB55jciUld6plOc",
-      authDomain: "becauaqbd.firebaseapp.com",
-      projectId: "becauaqbd",
-      storageBucket: "becauaqbd.firebasestorage.app",
-      messagingSenderId: "853997069826",
-      appId: "1:853997069826:web:50e1a3812626cf4255a91b"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    
-    window.firebaseApp = app;
-    window.firebaseDB = db;
-    window.firebaseModules = { collection, query, where, getDocs };
-  </script>
+  <!-- Firebase (compat, como en tu proyecto) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
-    :root {
-      --azul: #44658a;
-      --fondo: #e9fdfd;
-      --caja: white;
-      --borde-radio: 18px;
+    :root{
+      --azul:#44658a;
+      --fondo:#e9fdfd;
+      --caja:white;
+      --borde-radio:18px;
+      --verde:#4CAF50;
+      --rojo:#f44336;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--fondo);
+      font-family:"Segoe UI",sans-serif;
+      color:#222;
     }
 
-    body {
-      margin: 0;
-      background: var(--fondo);
-      font-family: "Segoe UI", sans-serif;
+    /* Header */
+    .header{
+      background:var(--azul);
+      color:white;
+      padding:18px 30px;
+      border-bottom-left-radius:45px;
+      border-bottom-right-radius:45px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      box-shadow:0 4px 12px rgba(0,0,0,0.15);
     }
 
-    .header {
-      background-color: var(--azul);
-      color: white;
-      padding: 18px 30px;
-      border-bottom-left-radius: 45px;
-      border-bottom-right-radius: 45px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    .header .left { display:flex; gap:12px; align-items:center; }
+    .user-icon{ width:48px; height:48px; background:#b9ecf5; border-radius:50%; display:grid; place-items:center; color:var(--azul); font-size:24px; }
+    .admin-info{ line-height:1; }
+
+    /* Content */
+    .content{ padding:25px; margin-bottom:100px; }
+
+    .section{ display:none; background:var(--caja); padding:20px; border-radius:var(--borde-radio); box-shadow:0 4px 12px rgba(0,0,0,0.08); }
+    .section.active{ display:block; }
+
+    .box{ background:white; padding:18px; border-radius:12px; box-shadow:0 3px 10px rgba(0,0,0,0.06); }
+
+    /* Footer / menu */
+    .footer{
+      position:fixed; left:0; right:0; bottom:0;
+      background:var(--azul);
+      padding:12px 8px;
+      display:flex;
+      justify-content:space-evenly;
+      gap:6px;
+      border-top-left-radius:20px;
+      border-top-right-radius:20px;
+      align-items:center;
+    }
+    .footer button{
+      background:none;
+      border:none;
+      color:white;
+      font-size:0.95rem;
+      cursor:pointer;
+      padding:8px 12px;
+      text-align:center;
+    }
+    .footer button:hover{ text-decoration:underline; }
+
+    /* Grid & cards */
+    .students-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:16px; margin-top:16px; }
+    .student-card{ background:white; padding:12px; border-radius:12px; border:1px solid #e6e6e6; }
+    .student-field{ display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f2f2f2; }
+    .student-field:last-child{ border-bottom: none; }
+
+    /* Calendar */
+    .calendar-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    .calendar-nav button{ background:var(--azul); color:white; border:none; padding:8px 10px; border-radius:6px; cursor:pointer; }
+    .week-calendar{ display:grid; grid-template-columns:repeat(7,1fr); gap:10px; margin-bottom:12px; }
+    .day-header{ background:var(--azul); color:white; padding:8px; text-align:center; border-radius:6px 6px 0 0; font-weight:600; }
+    .day-column{ background:#f9f9f9; border-radius:0 0 8px 8px; min-height:160px; padding:8px; box-shadow:0 2px 4px rgba(0,0,0,0.03); }
+
+    .interview-card{ background:#e6f2ff; border:1px solid #b3d9ff; border-radius:8px; padding:8px; margin-bottom:8px; cursor:pointer; }
+
+    /* small helpers */
+    .muted{ color:#666; font-size:0.95rem; }
+    .btn{ padding:8px 12px; border-radius:6px; border:none; cursor:pointer; }
+    .btn-primary{ background:var(--azul); color:white; }
+    .btn-outline{ background:transparent; border:1px solid #ddd; }
+
+    label{ display:block; margin-bottom:6px; font-weight:600; color:var(--azul) }
+    input[type="text"], input[type="email"], input[type="date"], input[type="time"], input[type="datetime-local"], select{
+      width:100%; padding:10px; border-radius:8px; border:1px solid #e0e0e0; margin-bottom:10px;
     }
 
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .user-icon {
-      width: 55px;
-      height: 55px;
-      background: #b9ecf5;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      font-size: 32px;
-      color: var(--azul);
-    }
-
-    .home-icon {
-      width: 50px;
-      height: 50px;
-      background: var(--azul);
-      border: 2px solid white;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-    }
-
-    .content {
-      padding: 25px;
-      margin-bottom: 90px;
-    }
-
-    .section {
-      display: none;
-      background: var(--caja);
-      padding: 20px;
-      border-radius: var(--borde-radio);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-
-    .active {
-      display: block;
-    }
-
-    .footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      background: var(--azul);
-      padding: 12px;
-      border-top-left-radius: 25px;
-      border-top-right-radius: 25px;
-    }
-
-    .footer button {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    .footer button:hover {
-      text-decoration: underline;
+    @media (max-width:700px){
+      .week-calendar{ grid-template-columns:repeat(2,1fr); }
+      .footer{ flex-wrap:wrap; gap:6px; padding:8px; }
     }
   </style>
-
 </head>
-
 <body>
 
   <div class="header">
-    <div class="user-info">
+    <div class="left">
       <div class="user-icon">👤</div>
-      <div>
-        <div><strong id="adminName">Admin suplente: Cargando...</strong></div>
-        <div id="adminId">ID-usuario: Cargando...</div>
+      <div class="admin-info">
+        <div><strong id="admin-name">Administrador</strong></div>
+        <div id="admin-id" class="muted">ID-usuario</div>
       </div>
     </div>
-    <div class="home-icon" onclick="showSection('inicio')">🏠</div>
+    <div class="home-icon" style="cursor:pointer" onclick="showSection('validacion')">🏠</div>
   </div>
 
   <div class="content">
+    <!-- VALIDACIÓN DE APLICANTES -->
+    <div id="validacion" class="section active">
+      <h2>Validación de Aplicantes</h2>
+      <div class="box">
+        <p class="muted">Lista de aplicantes (desde Firestore). Marca su estado de validación.</p>
+        <div style="margin-top:12px;">
+          <input type="text" id="filterValid" placeholder="Buscar por nombre o ID..." oninput="renderApplicants(this.value)">
+        </div>
 
-    <!--- home -->
-    <div id="inicio" class="section active">
-      <h2>Bienvenido</h2>
-      <p>Seleccione una opción del menú inferior.</p>
+        <div id="applicantsContainer" class="students-grid">
+          <div class="muted">Cargando aplicantes...</div>
+        </div>
+      </div>
     </div>
 
-    <!--- ############# vista de Validación de Aplicantes -->
-    <div id="validacion" class="section">
-      <h2>Validación de Aplicantes</h2>
-      <p>Seleccione una opción del menú inferior.</p>
-    </div> <!-- ############# fin ############# -->
-
-    <!--- ############# vista de Seguimiento de Aplicante -->
+    <!-- SEGUIMIENTO DE APLICANTES (Calendario) -->
     <div id="seguimiento" class="section">
       <h2>Seguimiento de Aplicantes</h2>
-      <p>Seleccione una opción del menú inferior.</p>
-    </div> <!-- ############# fin ############# -->
+      <div class="box">
+        <div class="calendar-header">
+          <h3 id="current-week">Semana actual</h3>
+          <div class="calendar-nav">
+            <button id="prev-week">← Semana anterior</button>
+            <button id="today">Hoy</button>
+            <button id="next-week">Semana siguiente →</button>
+          </div>
+        </div>
 
-    <!--- ############# vista de Publicación de Resultados -->
+        <div class="week-calendar">
+          <div>
+            <div class="day-header">Lunes</div>
+            <div class="day-column" data-day="1" id="monday">Cargando...</div>
+          </div>
+          <div>
+            <div class="day-header">Martes</div>
+            <div class="day-column" data-day="2" id="tuesday">Cargando...</div>
+          </div>
+          <div>
+            <div class="day-header">Miércoles</div>
+            <div class="day-column" data-day="3" id="wednesday">Cargando...</div>
+          </div>
+          <div>
+            <div class="day-header">Jueves</div>
+            <div class="day-column" data-day="4" id="thursday">Cargando...</div>
+          </div>
+          <div>
+            <div class="day-header">Viernes</div>
+            <div class="day-column" data-day="5" id="friday">Cargando...</div>
+          </div>
+          <div>
+            <div class="day-header">Sábado</div>
+            <div class="day-column" data-day="6" id="saturday">Cargando...</div>
+          </div>
+          <div>
+            <div class="day-header">Domingo</div>
+            <div class="day-column" data-day="0" id="sunday">Cargando...</div>
+          </div>
+        </div>
+
+        <div style="text-align:center; margin-top:10px;">
+          <button id="add-interview-btn" class="btn btn-primary">Agregar Nueva Entrevista</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PUBLICACIÓN DE RESULTADOS -->
     <div id="publicacion" class="section">
       <h2>Publicación de Resultados</h2>
-      <p>Seleccione una opción del menú inferior.</p>
-    </div> <!-- ############# fin ############# -->
+      <div class="box">
+        <p class="muted">Sube el PDF de resultados para publicación. Se guardará un registro en Firestore (nombre + timestamp).</p>
+        <input type="file" id="pdfResultados" accept="application/pdf">
+        <div style="margin-top:10px;">
+          <button onclick="uploadResult()" class="btn btn-primary">Subir resultados</button>
+        </div>
 
-    <!--- ############# vista de Registro de Preguntas -->
+        <h3 style="margin-top:18px">Resultados guardados</h3>
+        <div id="resultsList" style="margin-top:10px">Cargando...</div>
+      </div>
+    </div>
+
+    <!-- REGISTRO PREGUNTAS -->
     <div id="preguntas" class="section">
-      <h2>Registro de Preguntas</h2>
-      <p>Seleccione una opción del menú inferior.</p>
-    </div> <!-- ############# fin ############# -->
+      <h2>Registro Preguntas</h2>
+      <div class="box">
+        <p class="muted">Sube el PDF con las preguntas oficiales (se guarda metadato).</p>
+        <input type="file" id="pdfPreguntas" accept="application/pdf">
+        <div style="margin-top:10px;">
+          <button onclick="uploadQuestion()" class="btn btn-primary">Subir preguntas</button>
+        </div>
 
-    <!--- ############# vista de Acerca de -->
+        <h3 style="margin-top:18px">Documentos subidos</h3>
+        <div id="questionsList" style="margin-top:10px">Cargando...</div>
+      </div>
+    </div>
+
+    <!-- ACERCA -->
     <div id="acerca" class="section">
       <h2>Acerca</h2>
-      <div class="content">
-        <p>
-          La Aplicación de Becas UAQ es un proyecto desarrollado como parte del Proyecto Final de Redes de la Facultad de Informática de la Universidad Autónoma de Querétaro, dentro del programa educativo de Ingeniería de Software.
-        </p>
-
-        <p>
-          Su objetivo principal es brindar una solución digital que facilite la gestión y administración de información relacionada con becas estudiantiles, permitiendo a la universidad mantener procesos ordenados, accesibles y eficientes tanto para los estudiantes como para los administradores del sistema.
-        </p>
-
-        <p>
-          Este proyecto surge como respuesta a una problemática común: la desorganización en los procesos de becas y la falta de comunicación clara sobre el estado de las solicitudes. La aplicación ofrece una plataforma donde los alumnos pueden consultar el estado de sus entrevistas, documentos y resultados, mientras que los administradores pueden gestionar convocatorias, validar aplicantes y controlar el flujo completo del proceso.
-        </p>
-
-        <p>
-          Para su desarrollo se utilizaron tecnologías como <b>HTML, CSS, JavaScript, PHP y XAMPP</b>, además de herramientas de diseño como <b>Figma</b> para la creación de prototipos y <b>GitHub</b> para la colaboración del equipo durante el desarrollo.
-        </p>
-
-        <p>
-          El sistema plantea diferentes vistas según el tipo de usuario: estudiantes, administradores suplentes y administradores principales, cada uno con permisos y funciones específicas.
-        </p>
-
-        <p>
-          La aplicación está diseñada como un proyecto funcional, modular y escalable, con la capacidad de crecer y adaptarse a necesidades reales dentro del entorno universitario.
-        </p>
+      <div class="box">
+        <p>La Aplicación de Becas UAQ — Panel Administrador Suplente.</p>
+        <p class="muted">Versión: 1.0 — Diseñado para gestionar aplicaciones, entrevistas y resultados.</p>
       </div>
-    </div> <!-- ############# fin ############# -->
+    </div>
 
   </div>
 
+  <!-- FOOTER -->
   <div class="footer">
-    <button onclick="showSection('validacion')">Validación</button>
-    <button onclick="showSection('seguimiento')">Seguimiento</button>
-    <button onclick="showSection('publicacion')">Publicación</button>
-    <button onclick="showSection('preguntas')">Preguntas</button>
+    <button onclick="showSection('validacion')">Validación de Aplicantes</button>
+    <button onclick="showSection('seguimiento')">Seguimiento de Aplicantes</button>
+    <button onclick="showSection('publicacion')">Publicación de Resultados</button>
+    <button onclick="showSection('preguntas')">Registro Preguntas</button>
     <button onclick="showSection('acerca')">Acerca</button>
   </div>
 
-  <script>
-    function showSection(id) {
-      document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
-    }
+  <!-- Modal (simple) para agregar entrevista -->
+  <div id="interview-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:2000;">
+    <div style="background:white; padding:20px; border-radius:12px; width:320px;">
+      <h3>Agregar entrevista</h3>
+      <label>Selecciona estudiante (nombre o ID)</label>
+      <input id="modal-student" type="text" style="width:100%; padding:8px; margin-bottom:8px;">
+      <label>Fecha</label>
+      <input id="modal-date" type="date" style="width:100%; padding:8px; margin-bottom:8px;">
+      <label>Hora</label>
+      <input id="modal-time" type="time" style="width:100%; padding:8px; margin-bottom:8px;">
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button onclick="closeModal()" class="btn btn-outline">Cancelar</button>
+        <button onclick="saveModalInterview()" class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
 
-    // Cargar datos del administrador suplente desde Firebase
-    async function cargarDatosAdmin() {
-      try {
-        // Verificar que el usuario esté logueado
-        const usuarioStorage = localStorage.getItem('usuario');
-        
-        if (!usuarioStorage) {
-          console.log('No hay usuario en localStorage, redirigiendo...');
-          window.location.href = 'index.html';
-          return;
-        }
+<script>
+  // Protección simple del panel (si no hay sesión, redirigir)
+  if (!sessionStorage.getItem('admin_suplente')) {
+    // si quieres forzar la redirección, descomenta la siguiente línea
+    // window.location.href = 'login.html';
+    console.log('No sessionStorage admin_suplente set — asegúrate del login si quieres proteger el panel.');
+  }
 
-        const usuarioData = JSON.parse(usuarioStorage);
-        console.log('Datos del admin suplente desde localStorage:', usuarioData);
+  // Inicializar Firebase (compat) - usa tu config
+  const firebaseConfig = {
+    apiKey: "AIzaSyCw8ae27O1Bg8MNBZDKrB55jciUld6plOc",
+    authDomain: "becauaqbd.firebaseapp.com",
+    projectId: "becauaqbd",
+    storageBucket: "becauaqbd.firebasestorage.app",
+    messagingSenderId: "853997069826",
+    appId: "1:853997069826:web:50e1a3812626cf4255a91b"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-        // Actualizar la interfaz con los datos del admin
-        const adminNameElement = document.getElementById('adminName');
-        const adminIdElement = document.getElementById('adminId');
+  // Navegación entre secciones
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active');
 
-        if (usuarioData.nombre) {
-          adminNameElement.textContent = `Admin suplente: ${usuarioData.nombre}`;
-        } else {
-          adminNameElement.textContent = 'Admin suplente';
-        }
+    // acciones on-show
+    if (id === 'validacion') renderApplicants();
+    if (id === 'seguimiento') updateWeekDisplay();
+    if (id === 'publicacion') loadResults();
+    if (id === 'preguntas') loadQuestions();
+  }
 
-        if (usuarioData.id) {
-          adminIdElement.textContent = `ID: ${usuarioData.id}`;
-        } else {
-          adminIdElement.textContent = 'ID-usuario';
-        }
+  // -------------------------
+  // VALIDACIÓN DE APLICANTES
+  // -------------------------
+  async function renderApplicants(filter = '') {
+    const container = document.getElementById('applicantsContainer');
+    container.innerHTML = `<div class="muted">Cargando aplicantes...</div>`;
 
-        console.log('✅ Datos del admin suplente cargados correctamente');
+    try {
+      const snapshot = await db.collection('usuarios').where('tipo', '==', 'estudiantes').get();
+      const docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 
-      } catch (error) {
-        console.error('❌ Error al cargar datos del admin:', error);
-        
-        // En caso de error, mostrar valores por defecto
-        document.getElementById('adminName').textContent = 'Admin suplente';
-        document.getElementById('adminId').textContent = 'ID-usuario';
+      const filtered = docs.filter(d => {
+        const t = filter.toLowerCase();
+        if (!t) return true;
+        const name = (d.nombre||'').toLowerCase();
+        return name.includes(t) || (d.id && d.id.toLowerCase().includes(t));
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="muted">No se encontraron aplicantes.</div>';
+        return;
       }
-    }
 
-    // Ejecutar cuando la página cargue
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('🔄 Cargando datos del admin suplente...');
-      cargarDatosAdmin();
-    });
-
-    // Verificación de autenticación al cargar la página
-    if (!localStorage.getItem('usuario')) {
-      console.log('❌ No autenticado, redirigiendo a login...');
-      window.location.href = 'index.html';
+      container.innerHTML = '';
+      filtered.forEach(app => {
+        const div = document.createElement('div');
+        div.className = 'student-card';
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:600">${app.nombre||'Sin nombre'}</div>
+              <div class="muted">ID: ${app.id}</div>
+              <div class="muted">Correo: ${app.correo||'--'}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="margin-bottom:8px;">Estado: <b>${app.validacion || 'Pendiente'}</b></div>
+              <select id="sel-${app.id}" style="padding:6px; border-radius:6px;">
+                <option value="">-- Cambiar estado --</option>
+                <option value="Validado">Validado</option>
+                <option value="Incompleto">Incompleto</option>
+                <option value="Rechazado">Rechazado</option>
+              </select>
+              <div style="margin-top:8px;">
+                <button onclick="changeValidation('${app.id}')" class="btn btn-primary">Guardar</button>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    } catch (err) {
+      console.error(err);
+      container.innerHTML = `<div class="muted">Error cargando aplicantes: ${err.message}</div>`;
     }
-  </script>
+  }
+
+  async function changeValidation(applicantId) {
+    const sel = document.getElementById(`sel-${applicantId}`);
+    if (!sel) return;
+    const estado = sel.value;
+    if (!estado) return alert('Selecciona un estado');
+
+    try {
+      await db.collection('usuarios').doc(applicantId).set({ validacion: estado }, { merge: true });
+      alert('Estado guardado: ' + estado);
+      renderApplicants(document.getElementById('filterValid').value);
+    } catch (err) {
+      console.error(err);
+      alert('Error al guardar: ' + err.message);
+    }
+  }
+
+  // -------------------------
+  // ENTREVISTAS (CALENDARIO)
+  // -------------------------
+  let currentDate = new Date();
+
+  async function loadEntrevistas(startDate) {
+    // startDate = Date object representing start of week
+    try {
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + 6);
+      const snap = await db.collection('entrevista').get();
+
+      const entrevistasAll = [];
+      snap.forEach(d => {
+        const data = d.data();
+        // soportar timestamp y strings
+        let fechaObj = null;
+        if (data.fecha && data.fecha.toDate) fechaObj = data.fecha.toDate();
+        else if (data.Fecha && data.Fecha.toDate) fechaObj = data.Fecha.toDate();
+        else if (data.fecha) fechaObj = new Date(data.fecha);
+        else if (data.Fecha) fechaObj = new Date(data.Fecha);
+
+        if (!fechaObj) return;
+
+        if (fechaObj >= startDate && fechaObj <= endDate) entrevistasAll.push({ id: d.id, ...data, fechaObj });
+      });
+
+      // poblar por día
+      document.querySelectorAll('.day-column').forEach(col => col.innerHTML = '');
+      entrevistasAll.forEach(e => {
+        const dow = e.fechaObj.getDay(); // 0-6
+        const col = document.querySelector(`.day-column[data-day="${dow}"]`);
+        if (!col) return;
+        const card = document.createElement('div');
+        card.className = 'interview-card';
+        card.innerHTML = `<div class="interview-time">${e.fechaObj.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+                          <div style="font-weight:600">${e.estudiante || e.Nombre_Estudiante || e.nombre || 'Estudiante'}</div>
+                          <div class="muted" style="font-size:0.9rem">Entrevistador: ${e.Entrevistador||e.Nombre_Administrador||'--'}</div>`;
+        col.appendChild(card);
+      });
+
+      // mostrar vacíos
+      document.querySelectorAll('.day-column').forEach(col => {
+        if (!col.children.length) col.innerHTML = '<div class="muted">No hay entrevistas programadas</div>';
+      });
+    } catch (err) {
+      console.error(err);
+      document.querySelectorAll('.day-column').forEach(col => col.innerHTML = `<div class="muted">Error: ${err.message}</div>`);
+    }
+  }
+
+  function updateWeekDisplay(){
+    const startOfWeek = new Date(currentDate);
+    startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1); // lunes
+    startOfWeek.setHours(0,0,0,0);
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate()+6);
+
+    const options = { day:'numeric', month:'long', year:'numeric' };
+    document.getElementById('current-week').textContent = `Semana del ${startOfWeek.toLocaleDateString('es-ES',options)} al ${endOfWeek.toLocaleDateString('es-ES',options)}`;
+    loadEntrevistas(startOfWeek);
+  }
+
+  document.getElementById('prev-week').addEventListener('click', ()=> { currentDate.setDate(currentDate.getDate()-7); updateWeekDisplay(); });
+  document.getElementById('next-week').addEventListener('click', ()=> { currentDate.setDate(currentDate.getDate()+7); updateWeekDisplay(); });
+  document.getElementById('today').addEventListener('click', ()=> { currentDate = new Date(); updateWeekDisplay(); });
+
+  // Modal interview
+  const modalEl = document.getElementById('interview-modal');
+  document.getElementById('add-interview-btn').addEventListener('click', ()=> {
+    modalEl.style.display = 'flex';
+    document.getElementById('modal-student').value = '';
+    document.getElementById('modal-date').value = '';
+    document.getElementById('modal-time').value = '';
+  });
+
+  function closeModal(){ modalEl.style.display = 'none'; }
+
+  async function saveModalInterview(){
+    const nombre = document.getElementById('modal-student').value.trim();
+    const fecha = document.getElementById('modal-date').value;
+    const hora = document.getElementById('modal-time').value;
+    if(!nombre || !fecha || !hora) return alert('Completa todos los campos');
+
+    const fechaISO = new Date(`${fecha}T${hora}`);
+    try {
+      await db.collection('entrevista').add({
+        Nombre_Estudiante: nombre,
+        Fecha: fechaISO.toISOString(),
+        fecha: firebase.firestore.Timestamp.fromDate(fechaISO),
+        Entrevistador: sessionStorage.getItem('admin_suplente') || 'Administrador'
+      });
+      alert('Entrevista guardada');
+      closeModal();
+      updateWeekDisplay();
+    } catch(err){
+      console.error(err);
+      alert('Error al guardar entrevista: ' + err.message);
+    }
+  }
+
+  // -------------------------
+  // PUBLICACIÓN DE RESULTADOS
+  // -------------------------
+  async function uploadResult(){
+    const fileEl = document.getElementById('pdfResultados');
+    const file = fileEl.files[0];
+    if(!file) return alert('Selecciona un PDF');
+
+    try {
+      // Guardamos metadata en Firestore (si quieres Storage real, podemos añadirlo)
+      await db.collection('resultados').add({
+        nombreArchivo: file.name,
+        subidoPor: sessionStorage.getItem('admin_suplente') || 'Administrador',
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      alert('Resultado registrado en la base de datos');
+      fileEl.value = '';
+      loadResults();
+    } catch(err){
+      console.error(err);
+      alert('Error al subir resultado: ' + err.message);
+    }
+  }
+
+  async function loadResults(){
+    const container = document.getElementById('resultsList');
+    container.innerHTML = 'Cargando...';
+    try {
+      const snap = await db.collection('resultados').orderBy('timestamp','desc').limit(20).get();
+      if (snap.empty) { container.innerHTML = '<div class="muted">No hay resultados registrados.</div>'; return; }
+      container.innerHTML = '';
+      snap.forEach(d => {
+        const data = d.data();
+        const when = data.timestamp && data.timestamp.toDate ? data.timestamp.toDate().toLocaleString() : '—';
+        const el = document.createElement('div');
+        el.className = 'student-card';
+        el.innerHTML = `<div style="display:flex; justify-content:space-between;">
+          <div><b>${data.nombreArchivo}</b><div class="muted">Subido: ${when}</div></div>
+          <div style="text-align:right"><button onclick="downloadInfo('${d.id}')" class="btn btn-outline">Detalles</button></div>
+        </div>`;
+        container.appendChild(el);
+      });
+    } catch(err){
+      console.error(err);
+      container.innerHTML = `<div class="muted">Error: ${err.message}</div>`;
+    }
+  }
+
+  function downloadInfo(id){
+    alert('Función detalle. ID: ' + id + '\n(Implementa descarga desde Storage si quieres archivos reales.)');
+  }
+
+  // -------------------------
+  // REGISTRO PREGUNTAS
+  // -------------------------
+  async function uploadQuestion(){
+    const file = document.getElementById('pdfPreguntas').files[0];
+    if(!file) return alert('Selecciona un PDF');
+
+    try {
+      await db.collection('preguntas').add({
+        nombreArchivo: file.name,
+        subidoPor: sessionStorage.getItem('admin_suplente') || 'Administrador',
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      alert('Preguntas registradas');
+      document.getElementById('pdfPreguntas').value = '';
+      loadQuestions();
+    } catch(err){
+      console.error(err);
+      alert('Error: ' + err.message);
+    }
+  }
+
+  async function loadQuestions(){
+    const container = document.getElementById('questionsList');
+    container.innerHTML = 'Cargando...';
+    try {
+      const snap = await db.collection('preguntas').orderBy('timestamp','desc').limit(20).get();
+      if (snap.empty) { container.innerHTML = '<div class="muted">No hay documentos.</div>'; return; }
+      container.innerHTML = '';
+      snap.forEach(d => {
+        const data = d.data();
+        const when = data.timestamp && data.timestamp.toDate ? data.timestamp.toDate().toLocaleString() : '—';
+        const el = document.createElement('div');
+        el.className = 'student-card';
+        el.innerHTML = `<div style="display:flex; justify-content:space-between;">
+          <div><b>${data.nombreArchivo}</b><div class="muted">Subido: ${when}</div></div>
+          <div style="text-align:right"><button onclick="downloadInfo('${d.id}')" class="btn btn-outline">Detalles</button></div>
+        </div>`;
+        container.appendChild(el);
+      });
+    } catch(err){
+      console.error(err);
+      container.innerHTML = `<div class="muted">Error: ${err.message}</div>`;
+    }
+  }
+
+  // -------------------------
+  // Inicialización general
+  // -------------------------
+  document.addEventListener('DOMContentLoaded', ()=> {
+    // carga inicial
+    renderApplicants();
+    updateWeekDisplay();
+    loadResults();
+    loadQuestions();
+
+    // filter input
+    document.getElementById('filterValid').addEventListener('input', (e)=> renderApplicants(e.target.value));
+  });
+
+</script>
 
 </body>
 </html>
