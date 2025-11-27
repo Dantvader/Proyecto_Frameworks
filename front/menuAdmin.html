@@ -7,8 +7,28 @@
   <title>Administrador</title>
   
   <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js";
+        
+        // Your web app's Firebase configuration
+        // en español, credenciales para conectarse a la bd de fire
+        const firebaseConfig = {
+          apiKey: "AIzaSyCw8ae27O1Bg8MNBZDKrB55jciUld6plOc",
+          authDomain: "becauaqbd.firebaseapp.com",
+          projectId: "becauaqbd",
+          storageBucket: "becauaqbd.firebasestorage.app",
+          messagingSenderId: "853997069826",
+          appId: "1:853997069826:web:50e1a3812626cf4255a91b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        window.firebaseApp = app;
+        window.firebaseDB = db;
+        window.firebaseModules = { collection, query, where, getDocs };
+    </script>
 
   <style>
     :root {
@@ -318,8 +338,8 @@
     <div class="user-info">
       <div class="user-icon">👤</div>
       <div>
-        <div><strong>Administrador</strong></div>
-        <div>ID-usuario</div>
+        <div><strong>Administrador: </strong></div>
+        <div>ID-usuario:</div>
       </div>
     </div>
     <div class="home-icon" onclick="showSection('inicio')">🏠</div>

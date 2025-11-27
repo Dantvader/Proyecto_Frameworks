@@ -6,6 +6,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Usuario</title>
 
+  <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js";
+        
+        // Your web app's Firebase configuration
+        // en español, credenciales para conectarse a la bd de fire
+        const firebaseConfig = {
+          apiKey: "AIzaSyCw8ae27O1Bg8MNBZDKrB55jciUld6plOc",
+          authDomain: "becauaqbd.firebaseapp.com",
+          projectId: "becauaqbd",
+          storageBucket: "becauaqbd.firebasestorage.app",
+          messagingSenderId: "853997069826",
+          appId: "1:853997069826:web:50e1a3812626cf4255a91b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        window.firebaseApp = app;
+        window.firebaseDB = db;
+        window.firebaseModules = { collection, query, where, getDocs };
+    </script>
+
   <style>
     :root {
       --azul: #44658a;
@@ -172,8 +196,8 @@
     <div class="user-info">
       <div class="user-icon">👤</div>
       <div>
-        <div><strong>Usuario</strong></div>
-        <div>ID-Usuario</div>
+        <div><strong>Usuario: </strong></div>
+        <div>ID-Usuario: </div>
       </div>
     </div>
 
