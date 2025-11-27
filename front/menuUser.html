@@ -108,6 +108,60 @@
     .footer button:hover {
       text-decoration: underline;
     }
+     /*  estilos renovacion  */
+     body { margin:0; font-family:"Segoe UI",sans-serif; background:#e9fdfd; }
+  .header {
+    background:#44658a; color:#fff; text-align:center;
+    padding:40px 0 30px; font-size:2em; font-weight:500;
+    position:relative; border-bottom-left-radius:40% 10%;
+    border-bottom-right-radius:40% 10%;
+  }
+  .home-icon {
+    position:absolute; right:25px; top:25px; width:45px; height:45px;
+    background:#44658a; border-radius:50%; border:2px solid white;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .home-icon svg{ width:22px;height:22px; stroke:white; fill:none; stroke-width:2;}
+  .container { max-width:900px; margin:20px auto 100px; padding:20px; }
+  .data-box {
+    background:#fff; border-left:10px solid #44658a; padding:18px;
+    border-radius:8px; box-shadow:0 3px 8px rgba(0,0,0,.12); margin-bottom:18px;
+    display:flex; gap:16px; align-items:center;
+  }
+  .avatar {
+    width:72px; height:72px; border-radius:10px; object-fit:cover; border:2px solid #e6f3f7;
+    background:#fff;
+  }
+  .data-box .info p { margin:6px 0; font-size:1em; color:#222; }
+  #estadoBeca { font-weight:700; }
+  .option-box {
+    background:#fff; border-left:10px solid #00a1a7; padding:16px; border-radius:8px;
+    box-shadow:0 3px 8px rgba(0,0,0,.08);
+  }
+  .radio-group { display:flex; gap:28px; font-size:1.05em; margin-top:6px; }
+  input[type="radio"]{ transform:scale(1.15); margin-right:8px; }
+  .file-upload { margin-top:14px; display:none; }
+  input[type="file"]{
+    padding:12px; border:2px solid #44658a; background:#e8f9fb; border-radius:10px; width:100%;
+    cursor:pointer;
+  }
+  .btn {
+    margin-top:20px; background:#44658a; color:#fff; border:none; width:100%;
+    height:46px; border-radius:8px; cursor:pointer; font-size:1.05em;
+  }
+  .btn:hover{ background:#35506d; }
+  .alert {
+    display:none; padding:12px 18px; border-radius:8px; color:#fff; text-align:center;
+    margin-top:14px; font-weight:600;
+  }
+  .menu {
+    position:fixed; bottom:0; left:0; width:100%; background:#44658a; color:#fff;
+    display:flex; justify-content:space-around; padding:14px 0; font-size:1.05em;
+  }
+  .menu a{ color:#fff; text-decoration:none; }
+  .state-pill {
+    display:inline-block; padding:4px 10px; border-radius:12px; font-weight:700;
+  }
   </style>
 
 </head>
@@ -137,7 +191,13 @@
     <!-- Información sobre convocatorias activas. -->
     <div id="convocatoria" class="section">
       <h2>Convocatoria</h2>
-      <p>Información sobre convocatorias activas.</p>
+      <div class="form-container">
+        <iframe class="pdf-viewer" src="/uploads/convocatoria.pdf"></iframe>
+
+        <div class="buttons">
+          <button onclick="window.location.href='/descargar-convocatoria'">Descargar PDF</button>
+        </div>
+      </div>
     </div>
 
     <!-- Formulario de registro. -->
@@ -149,19 +209,84 @@
     <!-- Proceso de renovación de beca. -->
     <div id="renovacion" class="section">
       <h2>Renovación</h2>
-      <p>Proceso de renovación de beca.</p>
+      <div class="container">
+
+        <!-- DATOS DEL BECARIO (avatar usa archivo subido en /mnt/data/...) -->
+        <div class="data-box">
+          <img class="avatar" src="/mnt/data/A_2D_digital_design_of_a_user_interface_for_a_scho.png" alt="avatar">
+          <div class="info">
+            <p><strong>Nombre:</strong> Juan Pérez Ramírez</p>
+            <p><strong>Matrícula:</strong> 325742</p>
+            <p><strong>Carrera:</strong> Ingeniería en Software</p>
+            <p><strong>Estado de Beca Actual:</strong>
+              <span id="estadoBeca" class="state-pill" style="color:green; background:#e6f5f5; border:1px solid #cfecec;">Activa</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- OPCIONES -->
+        <div class="option-box">
+          <h3 style="margin:0;color:#24496f;">Solicitud de Renovación</h3>
+          <p style="margin:8px 0 6px;color:#444;">Seleccione una opción y envíe su solicitud. Si elige <em>Sí</em>, su estado cambiará a <strong>Pendiente</strong> hasta que un administrador apruebe.</p>
+
+          <div class="radio-group">
+            <label><input type="radio" name="renovar" value="si"> Sí deseo renovar</label>
+            <label><input type="radio" name="renovar" value="no"> No deseo renovar</label>
+          </div>
+
+          <div class="file-upload" id="uploadSection">
+            <p style="margin:10px 0 6px;"><strong>Suba el documento (PDF) para renovar:</strong></p>
+            <input id="docFile" type="file" accept="application/pdf" />
+          </div>
+
+          <button class="btn" onclick="enviarRenovacion()">Enviar renovación</button>
+
+          <div id="alertBox" class="alert"></div>
+        </div>
+
+      </div>
     </div>
 
     <!-- Resultados -->
     <div id="resultados" class="section">
       <h2>Resultados</h2>
-      <img src="resultados.jpg" width="100%" style="border-radius: 12px;">
+      <div class="form-container">
+        <iframe class="pdf-viewer" src="/uploads/resultados.pdf"></iframe>
+
+        <div class="buttons">
+          <button onclick="window.location.href='/descargar-resultados'">Descargar PDF</button>
+        </div>
+      </div>
     </div>
 
     <!-- Acerca de -->
     <div id="acerca" class="section">
       <h2>Acerca</h2>
-      <p>Información sobre la aplicación.</p>
+      <div class="content">
+        <p>
+          La Aplicación de Becas UAQ es un proyecto desarrollado como parte del Proyecto Final de Redes de la Facultad de Informática de la Universidad Autónoma de Querétaro, dentro del programa educativo de Ingeniería de Software.
+        </p>
+
+        <p>
+          Su objetivo principal es brindar una solución digital que facilite la gestión y administración de información relacionada con becas estudiantiles, permitiendo a la universidad mantener procesos ordenados, accesibles y eficientes tanto para los estudiantes como para los administradores del sistema.
+        </p>
+
+        <p>
+          Este proyecto surge como respuesta a una problemática común: la desorganización en los procesos de becas y la falta de comunicación clara sobre el estado de las solicitudes. La aplicación ofrece una plataforma donde los alumnos pueden consultar el estado de sus entrevistas, documentos y resultados, mientras que los administradores pueden gestionar convocatorias, validar aplicantes y controlar el flujo completo del proceso.
+        </p>
+
+        <p>
+          Para su desarrollo se utilizaron tecnologías como <b>HTML, CSS, JavaScript, PHP y XAMPP</b>, además de herramientas de diseño como <b>Figma</b> para la creación de prototipos y <b>GitHub</b> para la colaboración del equipo durante el desarrollo.
+        </p>
+
+        <p>
+          El sistema plantea diferentes vistas según el tipo de usuario: estudiantes, administradores suplentes y administradores principales, cada uno con permisos y funciones específicas.
+        </p>
+
+        <p>
+          La aplicación está diseñada como un proyecto funcional, modular y escalable, con la capacidad de crecer y adaptarse a necesidades reales dentro del entorno universitario.
+        </p>
+      </div>
     </div>
 
   </div>
