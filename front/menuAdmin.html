@@ -7,28 +7,8 @@
   <title>Administrador</title>
   
   <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js";
-        
-        // Your web app's Firebase configuration
-        // en español, credenciales para conectarse a la bd de fire
-        const firebaseConfig = {
-          apiKey: "AIzaSyCw8ae27O1Bg8MNBZDKrB55jciUld6plOc",
-          authDomain: "becauaqbd.firebaseapp.com",
-          projectId: "becauaqbd",
-          storageBucket: "becauaqbd.firebasestorage.app",
-          messagingSenderId: "853997069826",
-          appId: "1:853997069826:web:50e1a3812626cf4255a91b"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        
-        window.firebaseApp = app;
-        window.firebaseDB = db;
-        window.firebaseModules = { collection, query, where, getDocs };
-    </script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
     :root {
@@ -338,8 +318,8 @@
     <div class="user-info">
       <div class="user-icon">👤</div>
       <div>
-        <div><strong>Administrador: </strong></div>
-        <div>ID-usuario:</div>
+        <div><strong id="admin-name">Administrador</strong></div>
+        <div id="admin-id">ID-usuario</div>
       </div>
     </div>
     <div class="home-icon" onclick="showSection('inicio')">🏠</div>
@@ -353,20 +333,20 @@
       <p>Seleccione una opción del menú inferior.</p>
     </div>
 
-    <!--- ############# vista de Editar Convocatoria  -->
+    <!--- Editar Convocatoria  -->
     <div id="validacion" class="section">
       <h2>Editar Convocatoria</h2>
       <p>
         <div class="form-container">
-          <form action="/subir-convocatoria" method="POST" enctype="multipart/form-data">
-            <input type="file" name="pdf" accept="application/pdf" required />
-            <button type="submit">Subir nuevo PDF</button>
-          </form>
-        </div>
+        <form action="/subir-convocatoria" method="POST" enctype="multipart/form-data">
+        <input type="file" name="pdf" accept="application/pdf" required />
+        <button type="submit">Subir nuevo PDF</button>
+    </form>
+</div>
       </p>
-    </div> <!-- ############# fin ############# -->
+    </div>
 
-    <!--- ############# vista de Administrar Entrevistas -->
+    <!---  Administrar Entrevistas -->
     <div id="seguimiento" class="section">
       <h2>Calendario de Entrevistas</h2>
       
@@ -422,15 +402,15 @@
           Agregar Nueva Entrevista
         </button>
       </div>
-    </div> <!-- ############# fin ############# -->
+    </div>
 
-    <!--- ############# vista de Gestion de Becas  -->
+    <!--- Gestion de Becas  -->
     <div id="publicacion" class="section">
       <h2>Gestion de Becas</h2>
       <p>Seleccione una opción del menú inferior.</p>
-    </div> <!-- ############# fin ############# -->
- 
-    <!--- ############# vista de Registro Respuestas -->
+    </div>
+
+    <!---  Registro Respuestas -->
     <div id="preguntas" class="section">
       <h2>Registro Respuestas</h2>
       <p>
@@ -441,9 +421,9 @@
           </form>
         </div>
       </p>
-    </div> <!-- ############# fin ############# -->
+    </div>
 
-    <!--- ############# vista de Acerca de  -->
+    <!--- Acerca de  -->
     <div id="acerca" class="section">
       <h2>Acerca</h2>
       <div class="content">
@@ -471,7 +451,7 @@
           La aplicación está diseñada como un proyecto funcional, modular y escalable, con la capacidad de crecer y adaptarse a necesidades reales dentro del entorno universitario.
         </p>
       </div>
-    </div> <!-- ############# fin ############# -->
+    </div>
 
   </div>
 
@@ -537,6 +517,21 @@
     let currentDate = new Date();
     let estudiantes = [];
     let entrevistas = [];
+    let currentUser = null;
+
+    // Cargar información del usuario actual
+    function loadCurrentUser() {
+      try {
+        const userData = localStorage.getItem('usuario');
+        if (userData) {
+          currentUser = JSON.parse(userData);
+          document.getElementById('admin-name').textContent = currentUser.nombre || 'Administrador';
+          document.getElementById('admin-id').textContent = currentUser.id || 'ID-usuario';
+        }
+      } catch (error) {
+        console.error('Error al cargar usuario:', error);
+      }
+    }
 
     function showSection(id) {
       document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
@@ -552,13 +547,23 @@
     // Funciones para conexión con Firebase/Firestore
     async function loadEstudiantes() {
       try {
-        const snapshot = await db.collection('est1').get();
+        // Buscar en todas las colecciones que empiecen con "est"
+        const collections = await db.listCollections();
+        const studentCollections = collections.filter(col => col.id.startsWith('est'));
+        
         estudiantes = [];
-        snapshot.forEach(doc => {
-          const estudiante = doc.data();
-          estudiante.id = doc.id;
-          estudiantes.push(estudiante);
-        });
+        
+        for (const collection of studentCollections) {
+          const snapshot = await collection.get();
+          snapshot.forEach(doc => {
+            const estudiante = doc.data();
+            estudiante.id = doc.id;
+            estudiante.collectionName = collection.id; // Guardar nombre de la colección
+            estudiantes.push(estudiante);
+          });
+        }
+        
+        console.log('Estudiantes cargados:', estudiantes);
         
         // Si el modal está abierto, actualizar la lista
         if (document.getElementById('interview-modal').style.display === 'flex') {
@@ -574,20 +579,31 @@
         const endDate = new Date(startDate);
         endDate.setDate(startDate.getDate() + 7);
         
-        const snapshot = await db.collection('entrevista')
-          .where('Fecha', '>=', startDate)
-          .where('Fecha', '<=', endDate)
-          .get();
+        const snapshot = await db.collection('entrevista').get();
         
         entrevistas = [];
         snapshot.forEach(doc => {
           const entrevista = doc.data();
           entrevista.id = doc.id;
-          // Convertir timestamp de Firestore a Date
+          
+          // Convertir timestamp de Firestore a Date si es necesario
+          let fechaEntrevista;
           if (entrevista.Fecha && entrevista.Fecha.toDate) {
-            entrevista.Fecha = entrevista.Fecha.toDate();
+            fechaEntrevista = entrevista.Fecha.toDate();
+          } else if (entrevista.fecha) {
+            // Intentar parsear fecha en formato string
+            fechaEntrevista = new Date(entrevista.fecha);
+          } else {
+            console.warn('Entrevista sin fecha válida:', entrevista);
+            return;
           }
-          entrevistas.push(entrevista);
+          
+          entrevista.Fecha = fechaEntrevista;
+          
+          // Filtrar por rango de fecha
+          if (fechaEntrevista >= startDate && fechaEntrevista <= endDate) {
+            entrevistas.push(entrevista);
+          }
         });
         
         populateCalendar();
@@ -596,17 +612,44 @@
       }
     }
 
+    async function getNextInterviewId() {
+      try {
+        const snapshot = await db.collection('entrevista').get();
+        let maxId = 0;
+        
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          if (data.id_entrevista && data.id_entrevista > maxId) {
+            maxId = data.id_entrevista;
+          }
+        });
+        
+        return maxId + 1;
+      } catch (error) {
+        console.error('Error al obtener siguiente ID:', error);
+        return 1; // Si hay error, empezar desde 1
+      }
+    }
+
     async function saveEntrevista(entrevistaData) {
       try {
-        // Convertir fecha y hora a objeto Date
-        const fechaCompleta = new Date(`${entrevistaData.Fecha}`);
+        // Obtener siguiente ID
+        const nextId = await getNextInterviewId();
         
-        // Agregar datos adicionales
-        entrevistaData.Fecha = fechaCompleta;
-        entrevistaData.Creado = firebase.firestore.FieldValue.serverTimestamp();
+        // Convertir fecha y hora a objeto Date
+        const fechaCompleta = new Date(entrevistaData.Fecha);
+        
+        // Agregar datos adicionales siguiendo el patrón de la base de datos
+        const entrevistaToSave = {
+          Entrevistador: currentUser ? currentUser.nombre : "Administrador",
+          estudiante: entrevistaData.Nombre_Estudiante,
+          fecha: fechaCompleta,
+          id_entrevista: nextId,
+          Creado: firebase.firestore.FieldValue.serverTimestamp()
+        };
         
         // Guardar en Firestore
-        const docRef = await db.collection('entrevista').add(entrevistaData);
+        const docRef = await db.collection('entrevista').add(entrevistaToSave);
         return { success: true, id: docRef.id };
       } catch (error) {
         console.error('Error al guardar entrevista:', error);
@@ -616,6 +659,9 @@
 
     // Funcionalidad para navegar entre semanas
     document.addEventListener('DOMContentLoaded', function() {
+      // Cargar información del usuario
+      loadCurrentUser();
+      
       const prevWeekBtn = document.getElementById('prev-week');
       const nextWeekBtn = document.getElementById('next-week');
       const todayBtn = document.getElementById('today');
@@ -634,6 +680,9 @@
       // Abrir modal para agregar entrevista
       addInterviewBtn.addEventListener('click', function() {
         selectedStudentId = null;
+        // Establecer fecha mínima como hoy
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('interview-date').min = today;
         document.getElementById('interview-date').value = '';
         document.getElementById('interview-time').value = '';
         studentSearch.value = '';
@@ -648,6 +697,13 @@
       
       cancelBtn.addEventListener('click', function() {
         modal.style.display = 'none';
+      });
+      
+      // Cerrar modal al hacer clic fuera
+      window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+          modal.style.display = 'none';
+        }
       });
       
       // Buscar estudiantes
@@ -681,9 +737,9 @@
         
         // Crear objeto de entrevista
         const nuevaEntrevista = {
-          Nombre_Estudiante: estudiante.Nombre,
+          Nombre_Estudiante: estudiante.nombre || estudiante.Nombre,
           ID_Estudiante: estudiante.id,
-          Nombre_Administrador: 'Administrador', // Usando el nombre del administrador
+          Nombre_Administrador: currentUser ? currentUser.nombre : 'Administrador',
           Fecha: `${date}T${time}`
         };
         
@@ -711,9 +767,10 @@
           return;
         }
         
-        const filteredStudents = estudiantes.filter(estudiante => 
-          estudiante.Nombre.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        const filteredStudents = estudiantes.filter(estudiante => {
+          const nombre = estudiante.nombre || estudiante.Nombre || '';
+          return nombre.toLowerCase().includes(searchTerm.toLowerCase());
+        });
         
         if (filteredStudents.length === 0) {
           studentList.innerHTML = '<div class="student-item">No se encontraron estudiantes</div>';
@@ -723,7 +780,7 @@
         filteredStudents.forEach(estudiante => {
           const studentItem = document.createElement('div');
           studentItem.className = 'student-item';
-          studentItem.textContent = estudiante.Nombre;
+          studentItem.textContent = estudiante.nombre || estudiante.Nombre || estudiante.id;
           studentItem.addEventListener('click', function() {
             // Remover selección anterior
             document.querySelectorAll('.student-item').forEach(item => {
@@ -733,7 +790,7 @@
             // Seleccionar nuevo estudiante
             studentItem.classList.add('selected-student');
             selectedStudentId = estudiante.id;
-            studentSearch.value = estudiante.Nombre;
+            studentSearch.value = estudiante.nombre || estudiante.Nombre || estudiante.id;
           });
           
           studentList.appendChild(studentItem);
@@ -770,8 +827,8 @@
             interviewCard.className = 'interview-card';
             interviewCard.innerHTML = `
               <div class="interview-time">${fechaEntrevista.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'})}</div>
-              <div class="interview-candidate">${entrevista.Nombre_Estudiante}</div>
-              <div class="interview-position">Administrador: ${entrevista.Nombre_Administrador}</div>
+              <div class="interview-candidate">${entrevista.estudiante || entrevista.Nombre_Estudiante}</div>
+              <div class="interview-position">Entrevistador: ${entrevista.Entrevistador || entrevista.Nombre_Administrador}</div>
             `;
             dayColumn.appendChild(interviewCard);
           }
