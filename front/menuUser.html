@@ -306,39 +306,41 @@
 
     <!-- Renovación -->
     <div id="renovacion" class="section">
-      <h2>Renovación</h2>
-      <div class="container">
-        <div class="data-box">
-          <img class="avatar" src="/mnt/data/A_2D_digital_design_of_a_user_interface_for_a_scho.png" alt="avatar">
-          <div class="info">
-            <p><strong>Nombre:</strong> Juan Pérez Ramírez</p>
-            <p><strong>Matrícula:</strong> 325742</p>
-            <p><strong>Carrera:</strong> Ingeniería en Software</p>
-            <p><strong>Estado de Beca Actual:</strong>
-              <span id="estadoBeca" class="state-pill" style="color:green; background:#e6f5f5; border:1px solid #cfecec;">Activa</span>
-            </p>
-          </div>
+    <h2>Renovación</h2>
+    <div class="container">
+            <!-- DATOS DEL BECARIO -->
+            <div class="data-box">
+                <img class="avatar" src="/mnt/data/A_2D_digital_design_of_a_user_interface_for_a_scho.png" alt="avatar">
+                <div class="info">
+                    <p><strong>Nombre:</strong> <span id="renovacionNombre">Cargando...</span></p>
+                    <p><strong>Matrícula:</strong> <span id="renovacionMatricula">Cargando...</span></p>
+                    <p><strong>Carrera:</strong> <span id="renovacionCarrera">Cargando...</span></p>
+                    <p><strong>Estado de Beca Actual:</strong>
+                        <span id="renovacionEstadoBeca" class="state-pill">Cargando...</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- OPCIONES -->
+            <div class="option-box">
+                <h3 style="margin:0;color:#24496f;">Solicitud de Renovación</h3>
+                <p style="margin:8px 0 6px;color:#444;">Seleccione una opción y envíe su solicitud. Si elige <em>Sí</em>, su estado cambiará a <strong>Pendiente</strong> hasta que un administrador apruebe.</p>
+
+                <div class="radio-group">
+                    <label><input type="radio" name="renovar" value="si"> Sí deseo renovar</label>
+                    <label><input type="radio" name="renovar" value="no"> No deseo renovar</label>
+                </div>
+
+                <div class="file-upload" id="uploadSection">
+                    <p style="margin:10px 0 6px;"><strong>Suba el documento (PDF) para renovar:</strong></p>
+                    <input id="docFile" type="file" accept="application/pdf" />
+                </div>
+
+                <button class="btn" onclick="enviarRenovacion()">Enviar renovación</button>
+
+                <div id="alertBox" class="alert"></div>
+            </div>
         </div>
-
-        <div class="option-box">
-          <h3 style="margin:0;color:#24496f;">Solicitud de Renovación</h3>
-          <p style="margin:8px 0 6px;color:#444;">Seleccione una opción y envíe su solicitud. Si elige <em>Sí</em>, su estado cambiará a <strong>Pendiente</strong> hasta que un administrador apruebe.</p>
-
-          <div class="radio-group">
-            <label><input type="radio" name="renovar" value="si"> Sí deseo renovar</label>
-            <label><input type="radio" name="renovar" value="no"> No deseo renovar</label>
-          </div>
-
-          <div class="file-upload" id="uploadSection">
-            <p style="margin:10px 0 6px;"><strong>Suba el documento (PDF) para renovar:</strong></p>
-            <input id="docFile" type="file" accept="application/pdf" />
-          </div>
-
-          <button class="btn" onclick="enviarRenovacion()">Enviar renovación</button>
-
-          <div id="alertBox" class="alert"></div>
-        </div>
-      </div>
     </div>
 
     <!-- Resultados -->
@@ -384,26 +386,94 @@
     // Cargar datos del usuario
     async function cargarDatosUsuario() {
       try {
-        const usuarioStorage = localStorage.getItem('usuario');
-        if (!usuarioStorage) {
-          window.location.href = 'index.html';
-          return;
-        }
+          const usuarioStorage = localStorage.getItem('usuario');
+          if (!usuarioStorage) {
+              window.location.href = 'index.html';
+              return;
+          }
 
-        const usuarioData = JSON.parse(usuarioStorage);
-        const userNameElement = document.getElementById('userName');
-        const userIdElement = document.getElementById('userId');
+          const usuarioData = JSON.parse(usuarioStorage);
+          
+          // Actualizar header
+          const userNameElement = document.getElementById('userName');
+          const userIdElement = document.getElementById('userId');
 
-        if (usuarioData.nombre) {
-          userNameElement.textContent = usuarioData.nombre;
-        }
-        if (usuarioData.id) {
-          userIdElement.textContent = `ID: ${usuarioData.id}`;
-        }
+          if (usuarioData.nombre) {
+              userNameElement.textContent = usuarioData.nombre;
+          }
+          if (usuarioData.id) {
+              userIdElement.textContent = `ID: ${usuarioData.id}`;
+          }
+
+          // Cargar datos específicos para renovación
+          cargarDatosRenovacion(usuarioData);
 
       } catch (error) {
-        console.error('Error al cargar datos del usuario:', error);
+          console.error('Error al cargar datos del usuario:', error);
       }
+    }
+
+    function cargarDatosRenovacion(usuarioData) {
+    try {
+        console.log('📊 Cargando datos para renovación:', usuarioData);
+        
+        // Actualizar los elementos específicos de renovación
+        const nombreElement = document.getElementById('renovacionNombre');
+        const matriculaElement = document.getElementById('renovacionMatricula');
+        const carreraElement = document.getElementById('renovacionCarrera');
+        const estadoElement = document.getElementById('renovacionEstadoBeca');
+        
+        // Nombre
+        if (usuarioData.nombre) {
+            nombreElement.textContent = usuarioData.nombre;
+        } else {
+            nombreElement.textContent = 'No disponible';
+        }
+        
+        // Matrícula (usamos el ID como matrícula)
+        if (usuarioData.id) {
+            matriculaElement.textContent = usuarioData.id;
+        } else {
+            matriculaElement.textContent = 'No disponible';
+        }
+        
+        // Carrera
+        if (usuarioData.carrera) {
+            carreraElement.textContent = usuarioData.carrera;
+        } else {
+            carreraElement.textContent = 'No especificada';
+        }
+        
+        // Estado de beca
+        if (usuarioData.estado_beca) {
+            estadoElement.textContent = usuarioData.estado_beca;
+            
+            // Aplicar estilos según el estado
+            if (usuarioData.estado_beca === 'Activa') {
+                estadoElement.style.color = 'green';
+                estadoElement.style.background = '#e6f5f5';
+                estadoElement.style.border = '1px solid #cfecec';
+            } else if (usuarioData.estado_beca === 'Inactiva') {
+                estadoElement.style.color = 'red';
+                estadoElement.style.background = '#fde8e8';
+                estadoElement.style.border = '1px solid #fbd5d5';
+            } else if (usuarioData.estado_beca === 'Pendiente') {
+                estadoElement.style.color = 'orange';
+                estadoElement.style.background = '#fff3e6';
+                estadoElement.style.border = '1px solid #ffe0b3';
+            }
+        } else {
+            estadoElement.textContent = 'No disponible';
+            estadoElement.style.color = 'gray';
+            estadoElement.style.background = '#f5f5f5';
+            estadoElement.style.border = '1px solid #ddd';
+        }
+        
+        console.log('✅ Datos de renovación cargados correctamente');
+        
+    } catch (error) {
+        console.error('❌ Error al cargar datos de renovación:', error);
+    }
     }
 
     // Lógica para mostrar/ocultar upload según selección
