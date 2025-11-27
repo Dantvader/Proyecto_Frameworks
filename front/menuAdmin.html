@@ -7,7 +7,6 @@
   <title>Administrador</title>
   
   <!-- Firebase SDK -->
-<<<<<<< HEAD
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
     import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js";
@@ -28,10 +27,6 @@
     window.firebaseDB = db;
     window.firebaseModules = { collection, query, where, getDocs };
   </script>
-=======
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
->>>>>>> 2fa55854c9254a915522776f23ea9144313080e6
 
   <style>
     :root {
@@ -460,13 +455,8 @@
     <div class="user-info">
       <div class="user-icon">👤</div>
       <div>
-<<<<<<< HEAD
         <div><strong id="adminName">Administrador: Cargando...</strong></div>
         <div id="adminId">ID-usuario: Cargando...</div>
-=======
-        <div><strong id="admin-name">Administrador</strong></div>
-        <div id="admin-id">ID-usuario</div>
->>>>>>> 2fa55854c9254a915522776f23ea9144313080e6
       </div>
     </div>
     <div class="home-icon" onclick="showSection('inicio')">🏠</div>
@@ -652,73 +642,14 @@
   </div>
 
   <script>
-<<<<<<< HEAD
     function showSection(id) {
       document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
       document.getElementById(id).classList.add("active");
-=======
-    // Configuración de Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyCw8ae27O1Bg8MNBZDKrB55jciUld6plOc",
-      authDomain: "becauaqbd.firebaseapp.com",
-      projectId: "becauaqbd",
-      storageBucket: "becauaqbd.firebasestorage.app",
-      messagingSenderId: "853997069826",
-      appId: "1:853997069826:web:50e1a3812626cf4255a91b"
-    };
-
-    // Inicializar Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    // Variables globales
-    let selectedStudentId = null;
-    let currentDate = new Date();
-    let estudiantes = [];
-    let estudiantesConBecas = [];
-    let entrevistas = [];
-    let currentUser = null;
-
-    // Cargar información del usuario actual
-    function loadCurrentUser() {
-      try {
-        const userData = localStorage.getItem('usuario');
-        if (userData) {
-          currentUser = JSON.parse(userData);
-          document.getElementById('admin-name').textContent = currentUser.nombre || 'Administrador';
-          document.getElementById('admin-id').textContent = currentUser.id || 'ID-usuario';
-          console.log('Usuario cargado:', currentUser);
-        } else {
-          console.warn('No se encontró información de usuario en localStorage');
-        }
-      } catch (error) {
-        console.error('Error al cargar usuario:', error);
-      }
-    }
-
-    function showSection(id) {
-      document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
-      
-      // Si se muestra la sección de entrevistas, actualizar el calendario
-      if (id === 'seguimiento') {
-        console.log('Cargando sección de entrevistas...');
-        loadEstudiantes();
-        updateWeekDisplay();
-      }
-      
-      // Si se muestra la sección de gestión de becas, cargar estudiantes con estado de beca
-      if (id === 'publicacion') {
-        console.log('Cargando sección de gestión de becas...');
-        loadEstudiantesConBecas();
-      }
->>>>>>> 2fa55854c9254a915522776f23ea9144313080e6
     }
 
     // Cargar datos del administrador desde Firebase
     async function cargarDatosAdmin() {
       try {
-<<<<<<< HEAD
         // Verificar que el usuario esté logueado
         const usuarioStorage = localStorage.getItem('usuario');
         
@@ -737,410 +668,14 @@
 
         if (usuarioData.nombre) {
           adminNameElement.textContent = `Administrador: ${usuarioData.nombre}`;
-=======
-        console.log('Cargando estudiantes desde Firebase...');
-        
-        const querySnapshot = await db.collection('usuarios')
-          .where('tipo', '==', 'estudiantes')
-          .get();
-        
-        estudiantes = [];
-        querySnapshot.forEach(doc => {
-          const estudiante = doc.data();
-          estudiante.id = doc.id;
-          estudiantes.push(estudiante);
-        });
-        
-        console.log('Total de estudiantes cargados:', estudiantes.length);
-        
-        // Si el modal está abierto, actualizar la lista
-        if (document.getElementById('interview-modal').style.display === 'flex') {
-          loadStudentList();
-        }
-        
-        return estudiantes;
-      } catch (error) {
-        console.error('Error al cargar estudiantes:', error);
-        const studentList = document.getElementById('student-list');
-        if (studentList) {
-          studentList.innerHTML = '<div class="error">Error al cargar estudiantes: ' + error.message + '</div>';
-        }
-        return [];
-      }
-    }
-
-    // Cargar estudiantes con información de becas
-    async function loadEstudiantesConBecas() {
-      try {
-        console.log('Cargando estudiantes con estado de beca...');
-        
-        const container = document.getElementById('students-container');
-        container.innerHTML = '<div class="loading">Cargando estudiantes...</div>';
-        
-        // Cargar estudiantes
-        const estudiantesSnapshot = await db.collection('usuarios')
-          .where('tipo', '==', 'estudiantes')
-          .get();
-        
-        estudiantesConBecas = [];
-        
-        // Cargar estados de beca
-        const becasSnapshot = await db.collection('becas').get();
-        const estadosBeca = {};
-        
-        becasSnapshot.forEach(doc => {
-          estadosBeca[doc.id] = doc.data().activo || false;
-        });
-        
-        estudiantesSnapshot.forEach(doc => {
-          const estudiante = doc.data();
-          estudiante.id = doc.id;
-          estudiante.becaActiva = estadosBeca[doc.id] || false;
-          estudiantesConBecas.push(estudiante);
-        });
-        
-        console.log('Estudiantes con beca cargados:', estudiantesConBecas);
-        renderStudentsGrid();
-        
-      } catch (error) {
-        console.error('Error al cargar estudiantes con beca:', error);
-        document.getElementById('students-container').innerHTML = 
-          '<div class="error">Error al cargar estudiantes: ' + error.message + '</div>';
-      }
-    }
-
-    // Renderizar la cuadrícula de estudiantes
-    function renderStudentsGrid(searchTerm = '') {
-      const container = document.getElementById('students-container');
-      
-      if (estudiantesConBecas.length === 0) {
-        container.innerHTML = '<div class="loading">No se encontraron estudiantes</div>';
-        return;
-      }
-      
-      const filteredStudents = estudiantesConBecas.filter(estudiante => {
-        const nombre = estudiante.nombre || '';
-        const id = estudiante.id || '';
-        const searchText = searchTerm.toLowerCase();
-        return nombre.toLowerCase().includes(searchText) || id.toLowerCase().includes(searchText);
-      });
-      
-      if (filteredStudents.length === 0) {
-        container.innerHTML = '<div class="loading">No se encontraron estudiantes que coincidan con la búsqueda</div>';
-        return;
-      }
-      
-      container.innerHTML = `
-        <div class="students-grid">
-          ${filteredStudents.map(estudiante => `
-            <div class="student-card">
-              <div class="student-info">
-                <div class="student-field">
-                  <span class="field-label">Nombre:</span>
-                  <span class="field-value">${estudiante.nombre || 'No disponible'}</span>
-                </div>
-                <div class="student-field">
-                  <span class="field-label">ID:</span>
-                  <span class="field-value">${estudiante.id}</span>
-                </div>
-                <div class="student-field">
-                  <span class="field-label">Correo:</span>
-                  <span class="field-value">${estudiante.correo || 'No disponible'}</span>
-                </div>
-                <div class="student-field">
-                  <span class="field-label">Teléfono:</span>
-                  <span class="field-value">${estudiante.telefono || 'No disponible'}</span>
-                </div>
-              </div>
-              <div class="status-section">
-                <span class="field-label">Estado de Beca:</span>
-                <div class="status-toggle" onclick="toggleBecaStatus('${estudiante.id}')">
-                  <div class="status-indicator ${estudiante.becaActiva ? 'status-active' : 'status-inactive'}"></div>
-                  <span class="status-text ${estudiante.becaActiva ? 'status-active-text' : 'status-inactive-text'}">
-                    ${estudiante.becaActiva ? 'Activo' : 'Inactivo'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      `;
-    }
-
-    // Alternar estado de beca
-    async function toggleBecaStatus(studentId) {
-      try {
-        const estudiante = estudiantesConBecas.find(e => e.id === studentId);
-        if (!estudiante) {
-          alert('Error: Estudiante no encontrado');
-          return;
-        }
-        
-        const nuevoEstado = !estudiante.becaActiva;
-        
-        // Actualizar en Firebase
-        await db.collection('becas').doc(studentId).set({
-          activo: nuevoEstado,
-          estudianteId: studentId,
-          estudianteNombre: estudiante.nombre,
-          actualizadoPor: currentUser ? currentUser.nombre : 'Administrador',
-          fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-        
-        // Actualizar estado local
-        estudiante.becaActiva = nuevoEstado;
-        
-        // Re-renderizar la cuadrícula
-        const searchTerm = document.getElementById('student-search').value;
-        renderStudentsGrid(searchTerm);
-        
-        console.log(`Estado de beca actualizado para ${estudiante.nombre}: ${nuevoEstado ? 'Activo' : 'Inactivo'}`);
-        
-      } catch (error) {
-        console.error('Error al actualizar estado de beca:', error);
-        alert('Error al actualizar el estado de la beca: ' + error.message);
-      }
-    }
-
-    // El resto del código para entrevistas permanece igual...
-    async function loadEntrevistas(startDate) {
-      try {
-        console.log('Cargando entrevistas desde Firebase...');
-        
-        const endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + 7);
-        
-        const querySnapshot = await db.collection('entrevista').get();
-        
-        entrevistas = [];
-        querySnapshot.forEach(doc => {
-          const entrevista = doc.data();
-          entrevista.id = doc.id;
-          
-          let fechaEntrevista;
-          if (entrevista.fecha && entrevista.fecha.toDate) {
-            fechaEntrevista = entrevista.fecha.toDate();
-          } else if (entrevista.Fecha && entrevista.Fecha.toDate) {
-            fechaEntrevista = entrevista.Fecha.toDate();
-          } else if (entrevista.fecha) {
-            fechaEntrevista = new Date(entrevista.fecha);
-          } else if (entrevista.Fecha) {
-            fechaEntrevista = new Date(entrevista.Fecha);
-          } else {
-            console.warn('Entrevista sin fecha válida:', entrevista);
-            return;
-          }
-          
-          entrevista.fechaObj = fechaEntrevista;
-          
-          if (fechaEntrevista >= startDate && fechaEntrevista <= endDate) {
-            entrevistas.push(entrevista);
-          }
-        });
-        
-        console.log('Total de entrevistas para esta semana:', entrevistas.length);
-        populateCalendar();
-        
-      } catch (error) {
-        console.error('Error al cargar entrevistas:', error);
-        document.querySelectorAll('.day-column').forEach(column => {
-          column.innerHTML = '<div class="error">Error al cargar entrevistas: ' + error.message + '</div>';
-        });
-      }
-    }
-
-    async function getNextInterviewId() {
-      try {
-        const querySnapshot = await db.collection('entrevista').get();
-        let maxId = 0;
-        
-        querySnapshot.forEach(doc => {
-          const data = doc.data();
-          if (data.id_entrevista && data.id_entrevista > maxId) {
-            maxId = data.id_entrevista;
-          }
-        });
-        
-        return maxId + 1;
-      } catch (error) {
-        console.error('Error al obtener siguiente ID:', error);
-        return 1;
-      }
-    }
-
-    async function saveEntrevista(entrevistaData) {
-      try {
-        const nextId = await getNextInterviewId();
-        
-        const fechaCompleta = new Date(entrevistaData.Fecha);
-        
-        const entrevistaToSave = {
-          Entrevistador: currentUser ? currentUser.nombre : "Administrador",
-          estudiante: entrevistaData.Nombre_Estudiante,
-          fecha: fechaCompleta,
-          id_entrevista: nextId,
-          id_estudiante: entrevistaData.ID_Estudiante
-        };
-        
-        console.log('Guardando entrevista:', entrevistaToSave);
-        
-        const docRef = await db.collection('entrevista').add(entrevistaToSave);
-        return { success: true, id: docRef.id };
-      } catch (error) {
-        console.error('Error al guardar entrevista:', error);
-        return { success: false, message: error.message };
-      }
-    }
-
-    function populateCalendar() {
-      console.log('Poblando calendario con', entrevistas.length, 'entrevistas');
-      
-      document.querySelectorAll('.day-column').forEach(column => {
-        column.innerHTML = '';
-      });
-      
-      entrevistas.forEach(entrevista => {
-        const fechaEntrevista = entrevista.fechaObj;
-        const dayOfWeek = fechaEntrevista.getDay();
-        const dayColumn = document.querySelector(`.day-column[data-day="${dayOfWeek}"]`);
-        
-        if (dayColumn) {
-          const interviewCard = document.createElement('div');
-          interviewCard.className = 'interview-card';
-          interviewCard.innerHTML = `
-            <div class="interview-time">${fechaEntrevista.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'})}</div>
-            <div class="interview-candidate">${entrevista.estudiante || entrevista.Nombre_Estudiante}</div>
-            <div class="interview-position">Entrevistador: ${entrevista.Entrevistador || entrevista.Nombre_Administrador}</div>
-          `;
-          dayColumn.appendChild(interviewCard);
-        }
-      });
-      
-      document.querySelectorAll('.day-column').forEach(column => {
-        if (column.children.length === 0) {
-          const emptyMessage = document.createElement('div');
-          emptyMessage.className = 'empty-day';
-          emptyMessage.textContent = 'No hay entrevistas programadas';
-          column.appendChild(emptyMessage);
-        }
-      });
-    }
-
-    // Inicialización cuando el DOM está listo
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM cargado, inicializando aplicación...');
-      
-      loadCurrentUser();
-      
-      // Configurar búsqueda en gestión de becas
-      const searchInput = document.getElementById('student-search');
-      if (searchInput) {
-        searchInput.addEventListener('input', function() {
-          renderStudentsGrid(this.value);
-        });
-      }
-      
-      // El resto del código de inicialización para entrevistas...
-      const prevWeekBtn = document.getElementById('prev-week');
-      const nextWeekBtn = document.getElementById('next-week');
-      const todayBtn = document.getElementById('today');
-      const currentWeekElement = document.getElementById('current-week');
-      const addInterviewBtn = document.getElementById('add-interview-btn');
-      const modal = document.getElementById('interview-modal');
-      const closeBtn = document.querySelector('.close-btn');
-      const cancelBtn = document.getElementById('cancel-interview');
-      const modalStudentSearch = document.getElementById('modal-student-search');
-      const modalStudentList = document.getElementById('modal-student-list');
-      const interviewForm = document.getElementById('interview-form');
-      
-      loadEstudiantes();
-      
-      addInterviewBtn.addEventListener('click', function() {
-        selectedStudentId = null;
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('interview-date').min = today;
-        document.getElementById('interview-date').value = '';
-        document.getElementById('interview-time').value = '';
-        modalStudentSearch.value = '';
-        loadStudentList();
-        modal.style.display = 'flex';
-      });
-      
-      closeBtn.addEventListener('click', function() {
-        modal.style.display = 'none';
-      });
-      
-      cancelBtn.addEventListener('click', function() {
-        modal.style.display = 'none';
-      });
-      
-      window.addEventListener('click', function(event) {
-        if (event.target === modal) {
-          modal.style.display = 'none';
-        }
-      });
-      
-      modalStudentSearch.addEventListener('input', function() {
-        loadStudentList(this.value);
-      });
-      
-      interviewForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        if (!selectedStudentId) {
-          alert('Por favor, seleccione un estudiante');
-          return;
-        }
-        
-        const date = document.getElementById('interview-date').value;
-        const time = document.getElementById('interview-time').value;
-        
-        if (!date || !time) {
-          alert('Por favor, complete la fecha y hora de la entrevista');
-          return;
-        }
-        
-        const estudiante = estudiantes.find(e => e.id === selectedStudentId);
-        if (!estudiante) {
-          alert('Error: Estudiante no encontrado');
-          return;
-        }
-        
-        const nuevaEntrevista = {
-          Nombre_Estudiante: estudiante.nombre || `Estudiante ${estudiante.id}`,
-          ID_Estudiante: estudiante.id,
-          Nombre_Administrador: currentUser ? currentUser.nombre : 'Administrador',
-          Fecha: `${date}T${time}`
-        };
-        
-        console.log('Creando nueva entrevista:', nuevaEntrevista);
-        
-        const result = await saveEntrevista(nuevaEntrevista);
-        
-        if (result.success) {
-          updateWeekDisplay();
-          modal.style.display = 'none';
-          alert('Entrevista agendada exitosamente');
->>>>>>> 2fa55854c9254a915522776f23ea9144313080e6
         } else {
           adminNameElement.textContent = 'Administrador';
         }
-<<<<<<< HEAD
 
         if (usuarioData.id) {
           adminIdElement.textContent = `ID: ${usuarioData.id}`;
         } else {
           adminIdElement.textContent = 'ID-usuario';
-=======
-      });
-      
-      function loadStudentList(searchTerm = '') {
-        modalStudentList.innerHTML = '';
-        
-        if (estudiantes.length === 0) {
-          modalStudentList.innerHTML = '<div class="loading">Cargando estudiantes...</div>';
-          return;
->>>>>>> 2fa55854c9254a915522776f23ea9144313080e6
         }
 
         console.log('✅ Datos del administrador cargados correctamente');
@@ -1148,7 +683,6 @@
       } catch (error) {
         console.error('❌ Error al cargar datos del admin:', error);
         
-<<<<<<< HEAD
         // En caso de error, mostrar valores por defecto
         document.getElementById('adminName').textContent = 'Administrador';
         document.getElementById('adminId').textContent = 'ID-usuario';
@@ -1159,67 +693,6 @@
     document.addEventListener('DOMContentLoaded', function() {
       console.log('🔄 Cargando datos del administrador...');
       cargarDatosAdmin();
-=======
-        const filteredStudents = estudiantes.filter(estudiante => {
-          const nombre = estudiante.nombre || `Estudiante ${estudiante.id}`;
-          return nombre.toLowerCase().includes(searchTerm.toLowerCase());
-        });
-        
-        if (filteredStudents.length === 0) {
-          modalStudentList.innerHTML = '<div class="student-item">No se encontraron estudiantes</div>';
-          return;
-        }
-        
-        filteredStudents.forEach(estudiante => {
-          const studentItem = document.createElement('div');
-          studentItem.className = 'student-item';
-          studentItem.textContent = estudiante.nombre || `Estudiante ${estudiante.id}`;
-          studentItem.addEventListener('click', function() {
-            document.querySelectorAll('.student-item').forEach(item => {
-              item.classList.remove('selected-student');
-            });
-            
-            studentItem.classList.add('selected-student');
-            selectedStudentId = estudiante.id;
-            modalStudentSearch.value = estudiante.nombre || `Estudiante ${estudiante.id}`;
-          });
-          
-          modalStudentList.appendChild(studentItem);
-        });
-      }
-      
-      function updateWeekDisplay() {
-        const startOfWeek = new Date(currentDate);
-        startOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1);
-        startOfWeek.setHours(0, 0, 0, 0);
-        
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-        endOfWeek.setHours(23, 59, 59, 999);
-        
-        const options = { day: 'numeric', month: 'long', year: 'numeric' };
-        currentWeekElement.textContent = `Semana del ${startOfWeek.toLocaleDateString('es-ES', options)} al ${endOfWeek.toLocaleDateString('es-ES', options)}`;
-        
-        loadEntrevistas(startOfWeek);
-      }
-      
-      prevWeekBtn.addEventListener('click', function() {
-        currentDate.setDate(currentDate.getDate() - 7);
-        updateWeekDisplay();
-      });
-      
-      nextWeekBtn.addEventListener('click', function() {
-        currentDate.setDate(currentDate.getDate() + 7);
-        updateWeekDisplay();
-      });
-      
-      todayBtn.addEventListener('click', function() {
-        currentDate = new Date();
-        updateWeekDisplay();
-      });
-      
-      updateWeekDisplay();
->>>>>>> 2fa55854c9254a915522776f23ea9144313080e6
     });
 
     // Verificación de autenticación al cargar la página
