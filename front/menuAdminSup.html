@@ -7,28 +7,26 @@
   <title>Admin Suplente</title>
 
   <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js";
-        
-        // Your web app's Firebase configuration
-        // en español, credenciales para conectarse a la bd de fire
-        const firebaseConfig = {
-          apiKey: "AIzaSyCw8ae27O1Bg8MNBZDKrB55jciUld6plOc",
-          authDomain: "becauaqbd.firebaseapp.com",
-          projectId: "becauaqbd",
-          storageBucket: "becauaqbd.firebasestorage.app",
-          messagingSenderId: "853997069826",
-          appId: "1:853997069826:web:50e1a3812626cf4255a91b"
-        };
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyCw8ae27O1Bg8MNBZDKrB55jciUld6plOc",
+      authDomain: "becauaqbd.firebaseapp.com",
+      projectId: "becauaqbd",
+      storageBucket: "becauaqbd.firebasestorage.app",
+      messagingSenderId: "853997069826",
+      appId: "1:853997069826:web:50e1a3812626cf4255a91b"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        
-        window.firebaseApp = app;
-        window.firebaseDB = db;
-        window.firebaseModules = { collection, query, where, getDocs };
-    </script>
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    window.firebaseApp = app;
+    window.firebaseDB = db;
+    window.firebaseModules = { collection, query, where, getDocs };
+  </script>
 
   <style>
     :root {
@@ -135,8 +133,8 @@
     <div class="user-info">
       <div class="user-icon">👤</div>
       <div>
-        <div><strong>Admin suplente: </strong></div>
-        <div>ID-usuario: </div>
+        <div><strong id="adminName">Admin suplente: Cargando...</strong></div>
+        <div id="adminId">ID-usuario: Cargando...</div>
       </div>
     </div>
     <div class="home-icon" onclick="showSection('inicio')">🏠</div>
@@ -218,6 +216,60 @@
     function showSection(id) {
       document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
       document.getElementById(id).classList.add("active");
+    }
+
+    // Cargar datos del administrador suplente desde Firebase
+    async function cargarDatosAdmin() {
+      try {
+        // Verificar que el usuario esté logueado
+        const usuarioStorage = localStorage.getItem('usuario');
+        
+        if (!usuarioStorage) {
+          console.log('No hay usuario en localStorage, redirigiendo...');
+          window.location.href = 'index.html';
+          return;
+        }
+
+        const usuarioData = JSON.parse(usuarioStorage);
+        console.log('Datos del admin suplente desde localStorage:', usuarioData);
+
+        // Actualizar la interfaz con los datos del admin
+        const adminNameElement = document.getElementById('adminName');
+        const adminIdElement = document.getElementById('adminId');
+
+        if (usuarioData.nombre) {
+          adminNameElement.textContent = `Admin suplente: ${usuarioData.nombre}`;
+        } else {
+          adminNameElement.textContent = 'Admin suplente';
+        }
+
+        if (usuarioData.id) {
+          adminIdElement.textContent = `ID: ${usuarioData.id}`;
+        } else {
+          adminIdElement.textContent = 'ID-usuario';
+        }
+
+        console.log('✅ Datos del admin suplente cargados correctamente');
+
+      } catch (error) {
+        console.error('❌ Error al cargar datos del admin:', error);
+        
+        // En caso de error, mostrar valores por defecto
+        document.getElementById('adminName').textContent = 'Admin suplente';
+        document.getElementById('adminId').textContent = 'ID-usuario';
+      }
+    }
+
+    // Ejecutar cuando la página cargue
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('🔄 Cargando datos del admin suplente...');
+      cargarDatosAdmin();
+    });
+
+    // Verificación de autenticación al cargar la página
+    if (!localStorage.getItem('usuario')) {
+      console.log('❌ No autenticado, redirigiendo a login...');
+      window.location.href = 'index.html';
     }
   </script>
 

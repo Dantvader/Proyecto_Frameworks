@@ -11,8 +11,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
         import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js";
         
-        // Your web app's Firebase configuration
-        // en español, credenciales para conectarse a la bd de fire
         const firebaseConfig = {
           apiKey: "AIzaSyCw8ae27O1Bg8MNBZDKrB55jciUld6plOc",
           authDomain: "becauaqbd.firebaseapp.com",
@@ -132,60 +130,137 @@
     .footer button:hover {
       text-decoration: underline;
     }
-     /*  estilos renovacion  */
-     body { margin:0; font-family:"Segoe UI",sans-serif; background:#e9fdfd; }
-  .header {
-    background:#44658a; color:#fff; text-align:center;
-    padding:40px 0 30px; font-size:2em; font-weight:500;
-    position:relative; border-bottom-left-radius:40% 10%;
-    border-bottom-right-radius:40% 10%;
-  }
-  .home-icon {
-    position:absolute; right:25px; top:25px; width:45px; height:45px;
-    background:#44658a; border-radius:50%; border:2px solid white;
-    display:flex; align-items:center; justify-content:center; cursor:pointer;
-  }
-  .home-icon svg{ width:22px;height:22px; stroke:white; fill:none; stroke-width:2;}
-  .container { max-width:900px; margin:20px auto 100px; padding:20px; }
-  .data-box {
-    background:#fff; border-left:10px solid #44658a; padding:18px;
-    border-radius:8px; box-shadow:0 3px 8px rgba(0,0,0,.12); margin-bottom:18px;
-    display:flex; gap:16px; align-items:center;
-  }
-  .avatar {
-    width:72px; height:72px; border-radius:10px; object-fit:cover; border:2px solid #e6f3f7;
-    background:#fff;
-  }
-  .data-box .info p { margin:6px 0; font-size:1em; color:#222; }
-  #estadoBeca { font-weight:700; }
-  .option-box {
-    background:#fff; border-left:10px solid #00a1a7; padding:16px; border-radius:8px;
-    box-shadow:0 3px 8px rgba(0,0,0,.08);
-  }
-  .radio-group { display:flex; gap:28px; font-size:1.05em; margin-top:6px; }
-  input[type="radio"]{ transform:scale(1.15); margin-right:8px; }
-  .file-upload { margin-top:14px; display:none; }
-  input[type="file"]{
-    padding:12px; border:2px solid #44658a; background:#e8f9fb; border-radius:10px; width:100%;
-    cursor:pointer;
-  }
-  .btn {
-    margin-top:20px; background:#44658a; color:#fff; border:none; width:100%;
-    height:46px; border-radius:8px; cursor:pointer; font-size:1.05em;
-  }
-  .btn:hover{ background:#35506d; }
-  .alert {
-    display:none; padding:12px 18px; border-radius:8px; color:#fff; text-align:center;
-    margin-top:14px; font-weight:600;
-  }
-  .menu {
-    position:fixed; bottom:0; left:0; width:100%; background:#44658a; color:#fff;
-    display:flex; justify-content:space-around; padding:14px 0; font-size:1.05em;
-  }
-  .menu a{ color:#fff; text-decoration:none; }
-  .state-pill {
-    display:inline-block; padding:4px 10px; border-radius:12px; font-weight:700;
-  }
+    
+    /* Estilos específicos para la sección de renovación */
+    #renovacion .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    #renovacion .data-box {
+      background: #fff;
+      border-left: 10px solid #44658a;
+      padding: 18px;
+      border-radius: 8px;
+      box-shadow: 0 3px 8px rgba(0,0,0,.12);
+      margin-bottom: 18px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    #renovacion .avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 2px solid #e6f3f7;
+      background: #fff;
+    }
+
+    #renovacion .data-box .info p {
+      margin: 6px 0;
+      font-size: 1em;
+      color: #222;
+    }
+
+    #renovacion #estadoBeca {
+      font-weight: 700;
+    }
+
+    #renovacion .option-box {
+      background: #fff;
+      border-left: 10px solid #00a1a7;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 3px 8px rgba(0,0,0,.08);
+    }
+
+    #renovacion .radio-group {
+      display: flex;
+      gap: 28px;
+      font-size: 1.05em;
+      margin-top: 6px;
+    }
+
+    #renovacion input[type="radio"] {
+      transform: scale(1.15);
+      margin-right: 8px;
+    }
+
+    #renovacion .file-upload {
+      margin-top: 14px;
+      display: none;
+    }
+
+    #renovacion input[type="file"] {
+      padding: 12px;
+      border: 2px solid #44658a;
+      background: #e8f9fb;
+      border-radius: 10px;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    #renovacion .btn {
+      margin-top: 20px;
+      background: #44658a;
+      color: #fff;
+      border: none;
+      width: 100%;
+      height: 46px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.05em;
+    }
+
+    #renovacion .btn:hover {
+      background: #35506d;
+    }
+
+    #renovacion .alert {
+      display: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      color: #fff;
+      text-align: center;
+      margin-top: 14px;
+      font-weight: 600;
+    }
+
+    #renovacion .state-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 700;
+    }
+
+    /* Estilos para PDF viewers */
+    .pdf-viewer {
+      width: 100%;
+      height: 600px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    .form-container {
+      margin: 20px 0;
+    }
+
+    .buttons {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .buttons button {
+      background-color: var(--azul);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0 10px;
+    }
   </style>
 
 </head>
@@ -196,8 +271,8 @@
     <div class="user-info">
       <div class="user-icon">👤</div>
       <div>
-        <div><strong>Usuario: </strong></div>
-        <div>ID-Usuario: </div>
+        <div><strong id="userName">Usuario</strong></div>
+        <div id="userId">ID-Usuario</div>
       </div>
     </div>
 
@@ -212,30 +287,27 @@
       <p>Seleccione una opción del menú inferior.</p>
     </div>
 
-    <!-- ############# vista de Información sobre convocatorias activas. -->
+    <!-- Convocatorias -->
     <div id="convocatoria" class="section">
       <h2>Convocatoria</h2>
       <div class="form-container">
         <iframe class="pdf-viewer" src="/uploads/convocatoria.pdf"></iframe>
-
         <div class="buttons">
           <button onclick="window.location.href='/descargar-convocatoria'">Descargar PDF</button>
         </div>
       </div>
-    </div> <!-- ############# fin ############# -->
+    </div>
 
-    <!-- ############# vista del Formulario de registro. -->
+    <!-- Registro -->
     <div id="registro" class="section">
       <h2>Registro</h2>
       <p>Formulario de registro.</p>
-    </div> <!-- ############# fin ############# -->
+    </div>
 
-    <!-- ############# vista del Proceso de renovación de beca. -->
+    <!-- Renovación -->
     <div id="renovacion" class="section">
       <h2>Renovación</h2>
       <div class="container">
-
-        <!-- DATOS DEL BECARIO (avatar usa archivo subido en /mnt/data/...) -->
         <div class="data-box">
           <img class="avatar" src="/mnt/data/A_2D_digital_design_of_a_user_interface_for_a_scho.png" alt="avatar">
           <div class="info">
@@ -246,9 +318,8 @@
               <span id="estadoBeca" class="state-pill" style="color:green; background:#e6f5f5; border:1px solid #cfecec;">Activa</span>
             </p>
           </div>
-        </div> 
+        </div>
 
-        <!-- OPCIONES -->
         <div class="option-box">
           <h3 style="margin:0;color:#24496f;">Solicitud de Renovación</h3>
           <p style="margin:8px 0 6px;color:#444;">Seleccione una opción y envíe su solicitud. Si elige <em>Sí</em>, su estado cambiará a <strong>Pendiente</strong> hasta que un administrador apruebe.</p>
@@ -267,51 +338,32 @@
 
           <div id="alertBox" class="alert"></div>
         </div>
-
       </div>
-    </div> <!-- ############# fin ############# -->
+    </div>
 
-    <!-- ############# vista de Resultados -->
+    <!-- Resultados -->
     <div id="resultados" class="section">
       <h2>Resultados</h2>
       <div class="form-container">
         <iframe class="pdf-viewer" src="/uploads/resultados.pdf"></iframe>
-
         <div class="buttons">
           <button onclick="window.location.href='/descargar-resultados'">Descargar PDF</button>
         </div>
       </div>
-    </div> <!-- ############# fin ############# -->
+    </div>
 
-    <!-- ############# vista de Acerca de -->
+    <!-- Acerca de -->
     <div id="acerca" class="section">
       <h2>Acerca</h2>
       <div class="content">
-        <p>
-          La Aplicación de Becas UAQ es un proyecto desarrollado como parte del Proyecto Final de Redes de la Facultad de Informática de la Universidad Autónoma de Querétaro, dentro del programa educativo de Ingeniería de Software.
-        </p>
-
-        <p>
-          Su objetivo principal es brindar una solución digital que facilite la gestión y administración de información relacionada con becas estudiantiles, permitiendo a la universidad mantener procesos ordenados, accesibles y eficientes tanto para los estudiantes como para los administradores del sistema.
-        </p>
-
-        <p>
-          Este proyecto surge como respuesta a una problemática común: la desorganización en los procesos de becas y la falta de comunicación clara sobre el estado de las solicitudes. La aplicación ofrece una plataforma donde los alumnos pueden consultar el estado de sus entrevistas, documentos y resultados, mientras que los administradores pueden gestionar convocatorias, validar aplicantes y controlar el flujo completo del proceso.
-        </p>
-
-        <p>
-          Para su desarrollo se utilizaron tecnologías como <b>HTML, CSS, JavaScript, PHP y XAMPP</b>, además de herramientas de diseño como <b>Figma</b> para la creación de prototipos y <b>GitHub</b> para la colaboración del equipo durante el desarrollo.
-        </p>
-
-        <p>
-          El sistema plantea diferentes vistas según el tipo de usuario: estudiantes, administradores suplentes y administradores principales, cada uno con permisos y funciones específicas.
-        </p>
-
-        <p>
-          La aplicación está diseñada como un proyecto funcional, modular y escalable, con la capacidad de crecer y adaptarse a necesidades reales dentro del entorno universitario.
-        </p>
+        <p>La Aplicación de Becas UAQ es un proyecto desarrollado como parte del Proyecto Final de Redes de la Facultad de Informática de la Universidad Autónoma de Querétaro, dentro del programa educativo de Ingeniería de Software.</p>
+        <p>Su objetivo principal es brindar una solución digital que facilite la gestión y administración de información relacionada con becas estudiantiles, permitiendo a la universidad mantener procesos ordenados, accesibles y eficientes tanto para los estudiantes como para los administradores del sistema.</p>
+        <p>Este proyecto surge como respuesta a una problemática común: la desorganización en los procesos de becas y la falta de comunicación clara sobre el estado de las solicitudes. La aplicación ofrece una plataforma donde los alumnos pueden consultar el estado de sus entrevistas, documentos y resultados, mientras que los administradores pueden gestionar convocatorias, validar aplicantes y controlar el flujo completo del proceso.</p>
+        <p>Para su desarrollo se utilizaron tecnologías como <b>HTML, CSS, JavaScript, PHP y XAMPP</b>, además de herramientas de diseño como <b>Figma</b> para la creación de prototipos y <b>GitHub</b> para la colaboración del equipo durante el desarrollo.</p>
+        <p>El sistema plantea diferentes vistas según el tipo de usuario: estudiantes, administradores suplentes y administradores principales, cada uno con permisos y funciones específicas.</p>
+        <p>La aplicación está diseñada como un proyecto funcional, modular y escalable, con la capacidad de crecer y adaptarse a necesidades reales dentro del entorno universitario.</p>
       </div>
-    </div> <!-- ############# fin ############# -->
+    </div>
 
   </div>
 
@@ -329,9 +381,82 @@
       document.getElementById(id).classList.add("active");
     }
 
-        // Verificar que el usuario esté logueado
+    // Cargar datos del usuario
+    async function cargarDatosUsuario() {
+      try {
+        const usuarioStorage = localStorage.getItem('usuario');
+        if (!usuarioStorage) {
+          window.location.href = 'index.html';
+          return;
+        }
+
+        const usuarioData = JSON.parse(usuarioStorage);
+        const userNameElement = document.getElementById('userName');
+        const userIdElement = document.getElementById('userId');
+
+        if (usuarioData.nombre) {
+          userNameElement.textContent = usuarioData.nombre;
+        }
+        if (usuarioData.id) {
+          userIdElement.textContent = `ID: ${usuarioData.id}`;
+        }
+
+      } catch (error) {
+        console.error('Error al cargar datos del usuario:', error);
+      }
+    }
+
+    // Lógica para mostrar/ocultar upload según selección
+    document.addEventListener('DOMContentLoaded', function() {
+      cargarDatosUsuario();
+      
+      // Mostrar sección de upload solo cuando seleccionan "Sí"
+      const radios = document.querySelectorAll('input[name="renovar"]');
+      const uploadSection = document.getElementById('uploadSection');
+      
+      radios.forEach(radio => {
+        radio.addEventListener('change', function() {
+          if (this.value === 'si') {
+            uploadSection.style.display = 'block';
+          } else {
+            uploadSection.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    function enviarRenovacion() {
+      const selectedOption = document.querySelector('input[name="renovar"]:checked');
+      const alertBox = document.getElementById('alertBox');
+      
+      if (!selectedOption) {
+        alertBox.textContent = 'Por favor seleccione una opción';
+        alertBox.style.backgroundColor = '#ff6b6b';
+        alertBox.style.display = 'block';
+        return;
+      }
+      
+      if (selectedOption.value === 'si') {
+        const fileInput = document.getElementById('docFile');
+        if (!fileInput.files.length) {
+          alertBox.textContent = 'Por favor suba el documento PDF';
+          alertBox.style.backgroundColor = '#ff6b6b';
+          alertBox.style.display = 'block';
+          return;
+        }
+        alertBox.textContent = 'Solicitud de renovación enviada correctamente';
+        alertBox.style.backgroundColor = '#51cf66';
+      } else {
+        alertBox.textContent = 'Ha decidido no renovar su beca';
+        alertBox.style.backgroundColor = '#ffa94d';
+      }
+      
+      alertBox.style.display = 'block';
+    }
+
+    // Verificar que el usuario esté logueado
     if (!localStorage.getItem('usuario')) {
-        window.location.href = 'index.html';
+      window.location.href = 'index.html';
     }
   </script>
 
