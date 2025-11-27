@@ -373,7 +373,7 @@
       <div class="form-container">
         <iframe class="pdf-viewer" src="../recursos/convocatoria.pdf"></iframe>
         <div class="buttons">
-           <a href="recursos/convocatoria.pdf" download="convocatoria-becas.pdf">
+           <a href="../recursos/convocatoria.pdf" download="convocatoria-becas.pdf">
               <button>Descargar PDF</button>
           </a>
         </div>
@@ -453,7 +453,7 @@
       <div class="form-container">
         <iframe class="pdf-viewer" src="../recursos/resultados-becas.pdf"></iframe>
         <div class="buttons">
-            <a href="recursos/resultados.pdf" download="resultados-becas.pdf">
+            <a href="../recursos/resultados-becas.pdf" download="resultados-becas.pdf">
               <button>Descargar PDF</button>
             </a>
         </div>
@@ -552,7 +552,8 @@
                     activo: false,
                     estado: "No aplica",
                     fechaActualizacion: new Date(),
-                    actualizadoPor: "Sistema"
+                    actualizadoPor: "Sistema",
+                    peticion: false  // Nuevo campo agregado
                 };
                 
                 await setDoc(becaRef, nuevaBeca);
@@ -562,11 +563,12 @@
             
         } catch (error) {
             console.error('❌ Error al cargar datos de beca:', error);
-            // Mostrar datos básicos en caso de error
             actualizarInterfazRenovacion(usuarioData, null);
         }
     }
 
+    // Función para actualizar la interfaz con los datos
+    
     // Función para actualizar la interfaz con los datos
     function actualizarInterfazRenovacion(usuarioData, becaData) {
         // Datos del usuario
@@ -642,6 +644,8 @@
     }
 
     // Función para enviar solicitud de renovación
+    
+    // Función para enviar solicitud de renovación
     async function enviarSolicitudRenovacion() {
         const selectedOption = document.querySelector('input[name="renovar"]:checked');
         const alertBox = document.getElementById('alertBox');
@@ -669,13 +673,13 @@
                     return;
                 }
                 
-                // Actualizar estado a "Pendiente"
+                // Actualizar estado a "Pendiente" usando peticion: true
                 await updateDoc(becaRef, {
                     activo: false,
                     estado: "Pendiente",
                     fechaActualizacion: new Date(),
-                    actualizadoPor: usuarioData.nombre || "Estudiante",
-                    solicitudRenovacion: true,
+                    actualizadoPor: usuarioData.correo || "Estudiante", // Usar correo en lugar de nombre
+                    peticion: true,  // Cambiado de solicitudRenovacion a peticion
                     fechaSolicitud: new Date()
                 });
                 
@@ -687,8 +691,8 @@
                     activo: false,
                     estado: "No renovará",
                     fechaActualizacion: new Date(),
-                    actualizadoPor: usuarioData.nombre || "Estudiante",
-                    solicitudRenovacion: false
+                    actualizadoPor: usuarioData.correo || "Estudiante", // Usar correo
+                    peticion: false  // Cambiado de solicitudRenovacion a peticion
                 });
                 
                 mostrarAlerta('Ha decidido no renovar su beca', 'warning');
@@ -893,6 +897,7 @@
     }
 
     // Función para realizar el registro 
+    // Función para realizar el registro 
     async function realizarRegistro(nombre, correo, expediente, estadoBeca) {
         try {
             const usuarioStorage = localStorage.getItem('usuario');
@@ -910,12 +915,13 @@
                     estado: "Pendiente",
                     fechaActualizacion: new Date(),
                     actualizadoPor: "Sistema",
+                    peticion: false,  // Nuevo campo
                     correo: correo,
                     expediente: expediente,
                     fechaSolicitud: new Date()
                 });
             } else {
-                // Actualizar la beca existente si es necesario
+                // Actualizar la beca existente
                 const becaRef = doc(window.firebaseDB, "becas", usuarioData.id);
                 await updateDoc(becaRef, {
                     estudianteNombre: nombre || estadoBeca.estudianteNombre,
@@ -923,6 +929,7 @@
                     expediente: expediente,
                     fechaActualizacion: new Date(),
                     actualizadoPor: "Estudiante"
+                    // No modificamos peticion aquí, solo en renovación
                 });
             }
             
@@ -975,6 +982,189 @@
             mostrarResultadoRegistro('Error al cargar información de beca: ' + error.message, 'error');
         }
     }
+
+      // Función principal de verificación y registro
+  async function verificarYRegistrar() {
+      try {
+          const nombre = document.getElementById('nombre').value.trim();
+          const correo = document.getElementById('correo').value.trim();
+          const expediente = document.getElementById('expediente').value.trim();
+
+          // Validaciones básicas
+          if (!nombre || !correo || !expediente) {
+              mostrarResultadoRegistro('Por favor complete todos los campos', 'error');
+              return;
+          }
+
+          if (!validarEmail(correo)) {
+              mostrarResultadoRegistro('Por favor ingrese un correo válido', 'error');
+              return;
+          }
+
+          // Verificar estado actual de la beca
+          const estadoBeca = await verificarEstadoBeca();
+          
+          // Realizar el registro
+          await realizarRegistro(nombre, correo, expediente, estadoBeca);
+
+      } catch (error) {
+          console.error('Error en verificación:', error);
+          mostrarResultadoRegistro('Error al procesar la solicitud: ' + error.message, 'error');
+      }
+  }
+
+  // Función para determinar tipo de solicitud
+  function determinarTipoSolicitud(estadoBeca) {
+      if (!estadoBeca.existe) return 'nueva_solicitud';
+      if (estadoBeca.estado === 'Inactiva') return 'reactivacion';
+      if (estadoBeca.estado === 'Pendiente') return 'seguimiento';
+      return 'actualizacion';
+  }
+
+  // Función para generar mensaje de registro
+  function generarMensajeRegistro(estadoBeca) {
+      if (!estadoBeca.existe) {
+          return '✅ Nueva solicitud de beca registrada correctamente. Estado: Pendiente de revisión.';
+      }
+      
+      switch(estadoBeca.estado.toLowerCase()) {
+          case 'activa':
+              return '✅ Información actualizada correctamente. Su beca se encuentra ACTIVA.';
+          case 'pendiente':
+              return '⏳ Solicitud actualizada. Su estado sigue siendo PENDIENTE de revisión.';
+          case 'inactiva':
+              return '🔄 Solicitud de reactivación enviada. Estado: Pendiente de revisión.';
+          default:
+              return '✅ Información actualizada correctamente.';
+      }
+  }
+
+  // Función para mostrar resultado del registro
+  function mostrarResultadoRegistro(mensaje, tipo) {
+      const resultadoDiv = document.getElementById('registroResultado');
+      resultadoDiv.textContent = mensaje;
+      resultadoDiv.style.display = 'block';
+      
+      // Estilos según el tipo
+      switch(tipo) {
+          case 'success':
+              resultadoDiv.style.backgroundColor = '#d4edda';
+              resultadoDiv.style.color = '#155724';
+              resultadoDiv.style.border = '1px solid #c3e6cb';
+              break;
+          case 'error':
+              resultadoDiv.style.backgroundColor = '#f8d7da';
+              resultadoDiv.style.color = '#721c24';
+              resultadoDiv.style.border = '1px solid #f5c6cb';
+              break;
+          default:
+              resultadoDiv.style.backgroundColor = '#e2e3e5';
+              resultadoDiv.style.color = '#383d41';
+              resultadoDiv.style.border = '1px solid #d6d8db';
+      }
+  }
+
+  // Función para validar email
+  function validarEmail(email) {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return regex.test(email);
+  }
+
+  // Función para cargar estado de beca en registro (mejorada)
+  async function cargarEstadoBecaRegistro() {
+      try {
+          const estadoBeca = await verificarEstadoBeca();
+          mostrarEstadoBeca(estadoBeca);
+          
+          // Actualizar campos con datos existentes
+          if (estadoBeca.existe && estadoBeca.estudianteNombre) {
+              document.getElementById('nombre').value = estadoBeca.estudianteNombre;
+          }
+          
+      } catch (error) {
+          console.error('Error cargando estado de beca:', error);
+      }
+  }
+
+  // Modificar la función mostrarEstadoBeca para manejar mejor las fechas
+  function mostrarEstadoBeca(estadoBeca) {
+      const estadoInfo = document.getElementById('estadoBecaInfo');
+      const mensajeEstado = document.getElementById('mensajeEstado');
+      
+      estadoInfo.style.display = 'block';
+      
+      if (!estadoBeca.existe) {
+          mensajeEstado.innerHTML = `
+              <strong>Matrícula/ID:</strong> ${estadoBeca.estudianteId || 'No disponible'}<br>
+              <strong>Nombre:</strong> ${estadoBeca.estudianteNombre || 'No disponible'}<br>
+              <strong>Estado de Beca:</strong> ❌ No tienes una beca registrada. Puedes solicitar una nueva.
+          `;
+          estadoInfo.style.backgroundColor = '#fff3cd';
+          estadoInfo.style.border = '1px solid #ffeaa7';
+          return;
+      }
+      
+      let estadoTexto = '';
+      let icono = '';
+      
+      switch(estadoBeca.estado.toLowerCase()) {
+          case 'activa':
+              estadoTexto = 'ACTIVA';
+              icono = '✅';
+              estadoInfo.style.backgroundColor = '#d1ecf1';
+              estadoInfo.style.border = '1px solid #bee5eb';
+              break;
+          case 'inactiva':
+              estadoTexto = 'INACTIVA';
+              icono = '⚠️';
+              estadoInfo.style.backgroundColor = '#fff3cd';
+              estadoInfo.style.border = '1px solid #ffeaa7';
+              break;
+          case 'pendiente':
+              estadoTexto = 'PENDIENTE';
+              icono = '⏳';
+              estadoInfo.style.backgroundColor = '#e2e3e5';
+              estadoInfo.style.border = '1px solid #d6d8db';
+              break;
+          case 'no renovará':
+              estadoTexto = 'NO RENOVARÁ';
+              icono = '❌';
+              estadoInfo.style.backgroundColor = '#f8d7da';
+              estadoInfo.style.border = '1px solid #f5c6cb';
+              break;
+          default:
+              estadoTexto = estadoBeca.estado || 'NO DETERMINADO';
+              icono = '❓';
+              estadoInfo.style.backgroundColor = '#e2e3e5';
+              estadoInfo.style.border = '1px solid #d6d8db';
+      }
+      
+      // Manejo seguro de fechas
+      let fechaTexto = '';
+      if (estadoBeca.fechaActualizacion) {
+          try {
+              if (estadoBeca.fechaActualizacion.seconds) {
+                  // Timestamp de Firebase
+                  fechaTexto = new Date(estadoBeca.fechaActualizacion.seconds * 1000).toLocaleDateString('es-ES');
+              } else if (estadoBeca.fechaActualizacion.toDate) {
+                  // Objeto Timestamp de Firebase
+                  fechaTexto = estadoBeca.fechaActualizacion.toDate().toLocaleDateString('es-ES');
+              } else {
+                  // String de fecha
+                  fechaTexto = new Date(estadoBeca.fechaActualizacion).toLocaleDateString('es-ES');
+              }
+          } catch (e) {
+              fechaTexto = 'Fecha no disponible';
+          }
+      }
+      
+      mensajeEstado.innerHTML = `
+          <strong>Matrícula/ID:</strong> ${estadoBeca.estudianteId || 'No disponible'}<br>
+          <strong>Nombre:</strong> ${estadoBeca.estudianteNombre || 'No disponible'}<br>
+          <strong>Estado de Beca:</strong> ${icono} ${estadoTexto}<br>
+          ${fechaTexto ? `<strong>Última actualización:</strong> ${fechaTexto}` : ''}
+      `;
+  }
   </script>
 
 </body>
